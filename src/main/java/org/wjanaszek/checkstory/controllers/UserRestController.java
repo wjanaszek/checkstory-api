@@ -4,11 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.wjanaszek.checkstory.persistance.model.User;
 import org.wjanaszek.checkstory.persistance.repository.UserRepository;
-
-import java.net.URI;
 
 @RestController
 public class UserRestController {
@@ -22,21 +19,19 @@ public class UserRestController {
     @RequestMapping(path = "api/users", method = RequestMethod.POST)
     public ResponseEntity<?> add(@RequestBody User input) {
         User resultUser = userRepository.save(new User(input.getLogin(), input.getEmail(), input.getPassword()));
-        URI location = ServletUriComponentsBuilder
-                .fromCurrentRequest().path("/{id}")
-                .buildAndExpand(resultUser.getId()).toUri();
-        return ResponseEntity.created(location).build();
+//        URI location = ServletUriComponentsBuilder
+//                .fromCurrentRequest().path("/{id}")
+//                .buildAndExpand(resultUser.getId()).toUri();
+//        return ResponseEntity.created(location).build();
+        return new ResponseEntity<User>(resultUser, null, HttpStatus.CREATED);
     }
 
     /*
      *   Get list of users
      */
     @RequestMapping(path = "api/users", method = RequestMethod.GET)
-//    ResponseEntity<Iterable<User>> getUsers() {
-//        return new ResponseEntity<Iterable<User>>(this.userRepository.findAll(), null, HttpStatus.OK);
-//    }
-    public Iterable<User> getUsers() {
-        return this.userRepository.findAll();
+    public ResponseEntity<Iterable<User>> getUsers() {
+        return new ResponseEntity<Iterable<User>>(this.userRepository.findAll(), null, HttpStatus.OK);
     }
 
     /*
