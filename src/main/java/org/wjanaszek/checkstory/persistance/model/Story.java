@@ -16,6 +16,8 @@ public class Story implements Serializable {
     private Long id;
 
     private String description;
+
+    @Column(name = "start_date")
     private Date startDate;
     private User owner;
     // TODO maybe large binary objects? Or maybe another class with photo/story detail?
