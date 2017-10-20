@@ -1,7 +1,6 @@
 package org.wjanaszek.checkstory.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,9 +16,6 @@ public class AuthenticateRestController {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    private Environment environment;
-
     /*
      * Log in user
      */
@@ -27,9 +23,8 @@ public class AuthenticateRestController {
     @RequestMapping(path = "api/authenticate", method = RequestMethod.POST)
     public ResponseEntity<?> authenticateUser(@RequestBody AuthenticationBodyRequest body) {
         HttpHeaders responseHeaders = new HttpHeaders();
-        //responseHeaders.set("Access-Control-Allow-Origin", environment.getProperty("allowedOrigin"));
-        User user = userRepository.findByLogin(body.getLogin()).get(0);
-        if (user.getPassword().equals(body.getPassword())) {
+        User user = userRepository.findByLogin(body.getLogin());
+        if (user != null && user.getPassword().equals(body.getPassword())) {
             AuthenticationResponse responseBody = new AuthenticationResponse(user, "fake-jwt-token");
             return new ResponseEntity<AuthenticationResponse>(responseBody, responseHeaders, HttpStatus.OK);
         } else {
