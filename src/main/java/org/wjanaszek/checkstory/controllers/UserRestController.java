@@ -1,6 +1,7 @@
 package org.wjanaszek.checkstory.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +24,9 @@ public class UserRestController {
 //                .fromCurrentRequest().path("/{id}")
 //                .buildAndExpand(resultUser.getId()).toUri();
 //        return ResponseEntity.created(location).build();
-        return new ResponseEntity<User>(resultUser, null, HttpStatus.CREATED);
+        HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.set("Access-Control-Allow-Origin", "*");
+        return new ResponseEntity<User>(resultUser, responseHeaders, HttpStatus.CREATED);
     }
 
     /*
@@ -31,7 +34,9 @@ public class UserRestController {
      */
     @RequestMapping(path = "api/users", method = RequestMethod.GET)
     public ResponseEntity<Iterable<User>> getUsers() {
-        return new ResponseEntity<Iterable<User>>(this.userRepository.findAll(), null, HttpStatus.OK);
+        HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.set("Access-Control-Allow-Origin", "*");
+        return new ResponseEntity<Iterable<User>>(this.userRepository.findAll(), responseHeaders, HttpStatus.OK);
     }
 
     /*
@@ -40,10 +45,12 @@ public class UserRestController {
     @RequestMapping(path = "api/users/{id}", method = RequestMethod.GET)
     public ResponseEntity<User> getUserById(@PathVariable Long id) {
         User searchedUser = this.userRepository.findOne(id);
+        HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.set("Access-Control-Allow-Origin", "*");
         if (searchedUser != null) {
-            return new ResponseEntity<User>(searchedUser, null, HttpStatus.OK);
+            return new ResponseEntity<User>(searchedUser, responseHeaders, HttpStatus.OK);
         } else {
-            return new ResponseEntity<User>(null, null, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<User>(null, responseHeaders, HttpStatus.NOT_FOUND);
         }
     }
 
@@ -52,10 +59,12 @@ public class UserRestController {
      */
     @RequestMapping(path = "api/users/{id}", method = RequestMethod.PUT)
     public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User input) {
+        HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.set("Access-Control-Allow-Origin", "*");
         if (!id.equals(input.getId())) {
             return new ResponseEntity<User>(input, null, HttpStatus.BAD_REQUEST);
         } else {
-            return new ResponseEntity<User>(this.userRepository.save(input), null, HttpStatus.OK);
+            return new ResponseEntity<User>(this.userRepository.save(input), responseHeaders, HttpStatus.OK);
         }
     }
 
@@ -64,11 +73,13 @@ public class UserRestController {
      */
     @RequestMapping(path = "api/users/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<?> removeUser(@PathVariable Long id) {
+        HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.set("Access-Control-Allow-Origin", "*");
         if(this.userRepository.exists(id)) {
             this.userRepository.delete(id);
-            return new ResponseEntity<Object>(null, null, HttpStatus.OK);
+            return new ResponseEntity<Object>(null, responseHeaders, HttpStatus.OK);
         } else {
-            return new ResponseEntity<Object>(null, null, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<Object>(null, responseHeaders, HttpStatus.BAD_REQUEST);
         }
     }
 }

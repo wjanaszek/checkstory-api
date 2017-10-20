@@ -16,6 +16,7 @@ public class User implements Serializable {
     private String email;
     private String password;
 
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.PERSIST)
     private Set<Story> stories;
 
     protected User() {}
@@ -58,7 +59,6 @@ public class User implements Serializable {
         this.password = password;
     }
 
-    @OneToMany(mappedBy = "owner", cascade = CascadeType.PERSIST)
     public Set<Story> getStories() {
         return stories;
     }

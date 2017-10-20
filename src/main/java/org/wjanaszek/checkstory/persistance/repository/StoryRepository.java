@@ -5,5 +5,5 @@ import org.wjanaszek.checkstory.persistance.model.Story;
 
 public interface StoryRepository extends CrudRepository<Story, Long> {
 
-    Iterable<Story> findAllByUserId(Long userId);
+    //Iterable<Story> findAllByUserId(Long userId);
 }

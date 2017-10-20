@@ -1,24 +1,24 @@
 package org.wjanaszek.checkstory.persistance.model;
 
 import javax.persistence.*;
-import javax.xml.stream.events.DTD;
 import java.io.Serializable;
 import java.util.Date;
-import java.util.Set;
 
 @Entity
-@Table(name = "story")
+@Table(name = "story", schema = "public")
 public class Story implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id")
     private Long id;
 
     private String description;
 
     @Column(name = "start_date")
     private Date startDate;
+
+    @ManyToOne
+    @JoinColumn(name = "owner_id")
     private User owner;
     // TODO maybe large binary objects? Or maybe another class with photo/story detail?
     // private Set<String> photosDetails;
@@ -59,8 +59,6 @@ public class Story implements Serializable {
         return this.owner;
     }
 
-    @ManyToOne
-    @JoinColumn(name = "owner_id")
     public void setOwner(User owner) {
         this.owner = owner;
     }

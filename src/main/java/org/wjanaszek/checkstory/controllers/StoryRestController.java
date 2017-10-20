@@ -21,7 +21,9 @@ public class StoryRestController {
     @RequestMapping(path = "api/stories", method = RequestMethod.GET)
     public ResponseEntity<?> getStories(@RequestBody Long userId) {
         if (userRepository.exists(userId)) {
-            return new ResponseEntity<Iterable<Story>>(storyRepository.findAllByUserId(userId), null, HttpStatus.OK);
+//            return new ResponseEntity<Iterable<Story>>(storyRepository.findAllByUserId(userId), null, HttpStatus.OK);
+            return new ResponseEntity<Iterable<Story>>(null, null, HttpStatus.OK);
+
         } else {
             return new ResponseEntity<>(null, null, HttpStatus.BAD_REQUEST);
         }

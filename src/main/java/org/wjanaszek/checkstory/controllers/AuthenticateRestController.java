@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.wjanaszek.checkstory.persistance.model.User;
 import org.wjanaszek.checkstory.persistance.repository.UserRepository;
+import org.wjanaszek.checkstory.utils.AuthenticateResponse;
 
 @RestController
 public class AuthenticateRestController {
@@ -22,9 +23,9 @@ public class AuthenticateRestController {
             User user = userRepository.findOne(input.getId());
             // check password
             if (input.getPassword().equals(user.getPassword())) {
-                return new ResponseEntity<User>(user, null, HttpStatus.OK);
+                return new ResponseEntity<AuthenticateResponse>(new AuthenticateResponse(user.getId(), user.getLogin(), "fake-jwt-token"), null, HttpStatus.OK);
             } else {
-                return new ResponseEntity<User>(user, null, HttpStatus.UNAUTHORIZED);
+                return new ResponseEntity<>(null, null, HttpStatus.UNAUTHORIZED);
             }
         } else {
             return new ResponseEntity<User>(null, null, HttpStatus.UNAUTHORIZED);
