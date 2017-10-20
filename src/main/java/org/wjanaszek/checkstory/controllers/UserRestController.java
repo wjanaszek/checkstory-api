@@ -105,7 +105,6 @@ public class UserRestController {
     public ResponseEntity<Boolean> checkIfEmailAvailable(@RequestBody String email) {
         HttpHeaders responseHeaders = new HttpHeaders();
         if (email != null) {
-            System.out.println(email);
             if (userRepository.findByEmail(email) != null) {
                 return new ResponseEntity<Boolean>(false, responseHeaders, HttpStatus.OK);
             } else {
