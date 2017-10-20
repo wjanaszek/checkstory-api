@@ -30,7 +30,7 @@ public class UserRestController {
 //                .buildAndExpand(resultUser.getId()).toUri();
 //        return ResponseEntity.created(location).build();
         HttpHeaders responseHeaders = new HttpHeaders();
-        responseHeaders.set("Access-Control-Allow-Origin", environment.getProperty("allowedOrigin"));
+        //responseHeaders.set("Access-Control-Allow-Origin", environment.getProperty("allowedOrigin"));
         return new ResponseEntity<User>(resultUser, responseHeaders, HttpStatus.CREATED);
     }
 
@@ -41,7 +41,7 @@ public class UserRestController {
     @RequestMapping(path = "api/users", method = RequestMethod.GET)
     public ResponseEntity<Iterable<User>> getUsers() {
         HttpHeaders responseHeaders = new HttpHeaders();
-        responseHeaders.set("Access-Control-Allow-Origin", environment.getProperty("allowedOrigin"));
+        //responseHeaders.set("Access-Control-Allow-Origin", environment.getProperty("allowedOrigin"));
         return new ResponseEntity<Iterable<User>>(this.userRepository.findAll(), responseHeaders, HttpStatus.OK);
     }
 
@@ -53,7 +53,7 @@ public class UserRestController {
     public ResponseEntity<User> getUserById(@PathVariable Long id) {
         User searchedUser = this.userRepository.findOne(id);
         HttpHeaders responseHeaders = new HttpHeaders();
-        responseHeaders.set("Access-Control-Allow-Origin", environment.getProperty("allowedOrigin"));
+        //responseHeaders.set("Access-Control-Allow-Origin", environment.getProperty("allowedOrigin"));
         if (searchedUser != null) {
             return new ResponseEntity<User>(searchedUser, responseHeaders, HttpStatus.OK);
         } else {
@@ -68,7 +68,7 @@ public class UserRestController {
     @RequestMapping(path = "api/users/{id}", method = RequestMethod.PUT)
     public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User input) {
         HttpHeaders responseHeaders = new HttpHeaders();
-        responseHeaders.set("Access-Control-Allow-Origin", environment.getProperty("allowedOrigin"));
+        //responseHeaders.set("Access-Control-Allow-Origin", environment.getProperty("allowedOrigin"));
         if (!id.equals(input.getId())) {
             return new ResponseEntity<User>(input, null, HttpStatus.BAD_REQUEST);
         } else {
@@ -83,7 +83,7 @@ public class UserRestController {
     @RequestMapping(path = "api/users/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<?> removeUser(@PathVariable Long id) {
         HttpHeaders responseHeaders = new HttpHeaders();
-        responseHeaders.set("Access-Control-Allow-Origin", environment.getProperty("allowedOrigin"));
+        //responseHeaders.set("Access-Control-Allow-Origin", environment.getProperty("allowedOrigin"));
         if(this.userRepository.exists(id)) {
             this.userRepository.delete(id);
             return new ResponseEntity<Object>(null, responseHeaders, HttpStatus.OK);

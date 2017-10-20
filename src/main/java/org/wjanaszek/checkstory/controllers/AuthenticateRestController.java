@@ -8,7 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.wjanaszek.checkstory.persistance.model.User;
 import org.wjanaszek.checkstory.persistance.repository.UserRepository;
-import org.wjanaszek.checkstory.utils.AuthenticateResponse;
+import org.wjanaszek.checkstory.utils.AuthenticationBodyRequest;
+import org.wjanaszek.checkstory.utils.AuthenticationResponse;
 
 @RestController
 public class AuthenticateRestController {
@@ -21,22 +22,15 @@ public class AuthenticateRestController {
 
     @CrossOrigin
     @RequestMapping(path = "api/authenticate", method = RequestMethod.POST)
-    public ResponseEntity<?> authenticateUser(@RequestBody User input) {
+    public ResponseEntity<?> authenticateUser(@RequestBody AuthenticationBodyRequest body) {
         HttpHeaders responseHeaders = new HttpHeaders();
-        responseHeaders.set("Access-Control-Allow-Origin", environment.getProperty("allowedOrigin"));
-        if (userRepository.exists(input.getId())) {
-            User user = userRepository.findOne(input.getId());
-            // check password
-            if (input.getPassword().equals(user.getPassword())) {
-                return new ResponseEntity<AuthenticateResponse>(
-                        new AuthenticateResponse(user.getId(), user.getLogin(), "fake-jwt-token"),
-                        responseHeaders,
-                        HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(null, responseHeaders, HttpStatus.UNAUTHORIZED);
-            }
+        //responseHeaders.set("Access-Control-Allow-Origin", environment.getProperty("allowedOrigin"));
+        User user = userRepository.findByLogin(body.getLogin()).get(0);
+        if (user.getPassword().equals(body.getPassword())) {
+            AuthenticationResponse responseBody = new AuthenticationResponse(user, "fake-jwt-token");
+            return new ResponseEntity<AuthenticationResponse>(responseBody, responseHeaders, HttpStatus.OK);
         } else {
-            return new ResponseEntity<User>(null, responseHeaders, HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(null, responseHeaders, HttpStatus.UNAUTHORIZED);
         }
     }
 }
