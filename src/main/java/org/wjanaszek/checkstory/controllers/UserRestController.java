@@ -5,27 +5,23 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import org.wjanaszek.checkstory.model.User;
-import org.wjanaszek.checkstory.services.UserService;
+import org.wjanaszek.checkstory.persistance.model.User;
+import org.wjanaszek.checkstory.persistance.repository.UserRepository;
 
 import java.net.URI;
 
 @RestController
 public class UserRestController {
 
-    private final UserService userService;
-
     @Autowired
-    UserRestController(UserService userService) {
-        this.userService = userService;
-    }
+    private UserRepository userRepository;
 
     /*
      *   Create a user
      */
     @RequestMapping(path = "api/users", method = RequestMethod.POST)
-    ResponseEntity<?> add(@RequestBody User input) {
-        User resultUser = userService.saveUser(new User(input.getLogin(), input.getEmail(), input.getPassword()));
+    public ResponseEntity<?> add(@RequestBody User input) {
+        User resultUser = userRepository.save(new User(input.getLogin(), input.getEmail(), input.getPassword()));
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest().path("/{id}")
                 .buildAndExpand(resultUser.getId()).toUri();
@@ -36,16 +32,19 @@ public class UserRestController {
      *   Get list of users
      */
     @RequestMapping(path = "api/users", method = RequestMethod.GET)
-    ResponseEntity<Iterable<User>> getUsers() {
-        return new ResponseEntity<Iterable<User>>(this.userService.listAllUsers(), null, HttpStatus.OK);
+//    ResponseEntity<Iterable<User>> getUsers() {
+//        return new ResponseEntity<Iterable<User>>(this.userRepository.findAll(), null, HttpStatus.OK);
+//    }
+    public Iterable<User> getUsers() {
+        return this.userRepository.findAll();
     }
 
     /*
      * Get user by id
      */
     @RequestMapping(path = "api/users/{id}", method = RequestMethod.GET)
-    ResponseEntity<User> getUserById(@PathVariable Long id) {
-        User searchedUser = this.userService.getUserById(id);
+    public ResponseEntity<User> getUserById(@PathVariable Long id) {
+        User searchedUser = this.userRepository.findOne(id);
         if (searchedUser != null) {
             return new ResponseEntity<User>(searchedUser, null, HttpStatus.OK);
         } else {
@@ -57,11 +56,11 @@ public class UserRestController {
      * Update user with id
      */
     @RequestMapping(path = "api/users/{id}", method = RequestMethod.PUT)
-    ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User input) {
+    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User input) {
         if (!id.equals(input.getId())) {
             return new ResponseEntity<User>(input, null, HttpStatus.BAD_REQUEST);
         } else {
-            return new ResponseEntity<User>(this.userService.saveUser(input), null, HttpStatus.OK);
+            return new ResponseEntity<User>(this.userRepository.save(input), null, HttpStatus.OK);
         }
     }
 
@@ -69,8 +68,12 @@ public class UserRestController {
      * Delete user with id
      */
     @RequestMapping(path = "api/users/{id}", method = RequestMethod.DELETE)
-    ResponseEntity<?> removeUser(@PathVariable Long id) {
-        this.userService.deleteUser(id);
-        return new ResponseEntity<Object>(null, null, HttpStatus.OK);
+    public ResponseEntity<?> removeUser(@PathVariable Long id) {
+        if(this.userRepository.exists(id)) {
+            this.userRepository.delete(id);
+            return new ResponseEntity<Object>(null, null, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<Object>(null, null, HttpStatus.BAD_REQUEST);
+        }
     }
 }

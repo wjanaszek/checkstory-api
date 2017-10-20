@@ -1,23 +1,27 @@
-package org.wjanaszek.checkstory.model;
+package org.wjanaszek.checkstory.persistance.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
-@Table(name = "user")
-public class User {
+@Table(name = "user", schema = "public")
+public class User implements Serializable {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id")
     private Long id;
 
+    @Column
     private String login;
+
+    @Column
     private String email;
+
+    @Column
     private String password;
 
-    User() {} // jpa only
+    protected User() {}
 
     public User(String login, String email, String password) {
         this.login = login;
