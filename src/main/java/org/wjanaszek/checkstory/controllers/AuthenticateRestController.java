@@ -20,6 +20,9 @@ public class AuthenticateRestController {
     @Autowired
     private Environment environment;
 
+    /*
+     * Log in user
+     */
     @CrossOrigin
     @RequestMapping(path = "api/authenticate", method = RequestMethod.POST)
     public ResponseEntity<?> authenticateUser(@RequestBody AuthenticationBodyRequest body) {

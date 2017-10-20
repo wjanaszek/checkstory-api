@@ -42,7 +42,7 @@ public class UserRestController {
     public ResponseEntity<Iterable<User>> getUsers() {
         HttpHeaders responseHeaders = new HttpHeaders();
         //responseHeaders.set("Access-Control-Allow-Origin", environment.getProperty("allowedOrigin"));
-        return new ResponseEntity<Iterable<User>>(this.userRepository.findAll(), responseHeaders, HttpStatus.OK);
+        return new ResponseEntity<Iterable<User>>(userRepository.findAll(), responseHeaders, HttpStatus.OK);
     }
 
     /*
@@ -51,7 +51,7 @@ public class UserRestController {
     @CrossOrigin
     @RequestMapping(path = "api/users/{id}", method = RequestMethod.GET)
     public ResponseEntity<User> getUserById(@PathVariable Long id) {
-        User searchedUser = this.userRepository.findOne(id);
+        User searchedUser = userRepository.findOne(id);
         HttpHeaders responseHeaders = new HttpHeaders();
         //responseHeaders.set("Access-Control-Allow-Origin", environment.getProperty("allowedOrigin"));
         if (searchedUser != null) {
@@ -72,7 +72,7 @@ public class UserRestController {
         if (!id.equals(input.getId())) {
             return new ResponseEntity<User>(input, null, HttpStatus.BAD_REQUEST);
         } else {
-            return new ResponseEntity<User>(this.userRepository.save(input), responseHeaders, HttpStatus.OK);
+            return new ResponseEntity<User>(userRepository.save(input), responseHeaders, HttpStatus.OK);
         }
     }
 
@@ -84,11 +84,47 @@ public class UserRestController {
     public ResponseEntity<?> removeUser(@PathVariable Long id) {
         HttpHeaders responseHeaders = new HttpHeaders();
         //responseHeaders.set("Access-Control-Allow-Origin", environment.getProperty("allowedOrigin"));
-        if(this.userRepository.exists(id)) {
-            this.userRepository.delete(id);
+        if(userRepository.exists(id)) {
+            userRepository.delete(id);
             return new ResponseEntity<Object>(null, responseHeaders, HttpStatus.OK);
         } else {
             return new ResponseEntity<Object>(null, responseHeaders, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    /*
+     * Check if login is available for user
+     */
+    @CrossOrigin
+    @RequestMapping(path = "api/users/{login}", method = RequestMethod.GET)
+    public ResponseEntity<Boolean> checkIfLoginAvailable(@PathVariable String login) {
+        HttpHeaders responseHeaders = new HttpHeaders();
+        if (login != null) {
+            if (userRepository.findByLogin(login).size() > 0) {
+                return new ResponseEntity<Boolean>(false, responseHeaders, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<Boolean>(true, responseHeaders, HttpStatus.OK);
+            }
+        } else {
+            return new ResponseEntity<Boolean>(null, responseHeaders, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    /*
+     * Check if email is available for user
+     */
+    @CrossOrigin
+    @RequestMapping(path = "api/users/{email}", method = RequestMethod.GET)
+    public ResponseEntity<Boolean> checkIfEmailAvailable(@PathVariable String email) {
+        HttpHeaders responseHeaders = new HttpHeaders();
+        if (email != null) {
+            if (userRepository.findByEmail(email).size() > 0) {
+                return new ResponseEntity<Boolean>(false, responseHeaders, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<Boolean>(true, responseHeaders, HttpStatus.OK);
+            }
+        } else {
+            return new ResponseEntity<Boolean>(null, responseHeaders, HttpStatus.BAD_REQUEST);
         }
     }
 }
