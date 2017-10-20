@@ -127,4 +127,22 @@ public class UserRestController {
             return new ResponseEntity<Boolean>(null, responseHeaders, HttpStatus.BAD_REQUEST);
         }
     }
+
+    /*
+     * Check if password is correct for user in change password action
+     */
+    @CrossOrigin
+    @RequestMapping(path = "api/user/checkPassword/{id}", method = RequestMethod.GET)
+    public ResponseEntity<Boolean> checkPassword(@PathVariable Long id, @RequestBody String password) {
+        HttpHeaders responseHeaders = new HttpHeaders();
+        if (password != null) {
+            if (userRepository.findOne(id).getPassword().equals(password)) {
+                return new ResponseEntity<Boolean>(true, responseHeaders, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<Boolean>(false, responseHeaders, HttpStatus.OK);
+            }
+        } else {
+            return new ResponseEntity<Boolean>(null, responseHeaders, HttpStatus.BAD_REQUEST);
+        }
+    }
 }
