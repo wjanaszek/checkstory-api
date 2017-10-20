@@ -119,7 +119,7 @@ public class UserRestController {
      * Check if password is correct for user in change password action
      */
     @CrossOrigin
-    @RequestMapping(path = "api/user/checkPassword/{id}", method = RequestMethod.POST)
+    @RequestMapping(path = "api/users/checkPassword/{id}", method = RequestMethod.POST)
     public ResponseEntity<Boolean> checkPassword(@PathVariable Long id, @RequestBody String password) {
         HttpHeaders responseHeaders = new HttpHeaders();
         if (password != null) {
