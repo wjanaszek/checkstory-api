@@ -2,6 +2,7 @@ package org.wjanaszek.checkstory.persistance.model;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Set;
 
 @Entity
 @Table(name = "user", schema = "public")
@@ -9,17 +10,13 @@ public class User implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id")
     private Long id;
 
-    @Column
     private String login;
-
-    @Column
     private String email;
-
-    @Column
     private String password;
+
+    private Set<Story> stories;
 
     protected User() {}
 
@@ -59,5 +56,14 @@ public class User implements Serializable {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.PERSIST)
+    public Set<Story> getStories() {
+        return stories;
+    }
+
+    public void setStories(Set<Story> stories) {
+        this.stories = stories;
     }
 }
