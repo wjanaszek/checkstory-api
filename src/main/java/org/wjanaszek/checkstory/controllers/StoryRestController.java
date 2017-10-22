@@ -9,11 +9,8 @@ import org.wjanaszek.checkstory.persistance.model.Story;
 import org.wjanaszek.checkstory.persistance.model.User;
 import org.wjanaszek.checkstory.persistance.repository.StoryRepository;
 import org.wjanaszek.checkstory.persistance.repository.UserRepository;
-
-import java.util.List;
 import java.util.Set;
 
-//TODO implement/check
 @RestController
 public class StoryRestController {
 
@@ -51,7 +48,6 @@ public class StoryRestController {
     @RequestMapping(path = "api/stories", method = RequestMethod.POST)
     public ResponseEntity<?> addStory(@RequestBody Story story) {
         HttpHeaders responseHeaders = new HttpHeaders();
-        System.out.println("latitude: " + story.getLatitude() + ", longitude: " + story.getLongitude());
         if (userRepository.exists(story.getOwner().getId())) {
             return new ResponseEntity<Story>(storyRepository.save(story), responseHeaders, HttpStatus.CREATED);
         } else {
