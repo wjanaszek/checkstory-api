@@ -1,5 +1,7 @@
 package org.wjanaszek.checkstory.persistance.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import javax.persistence.*;
 
 @Entity
@@ -11,6 +13,7 @@ public class Photo {
 
     @ManyToOne
     @JoinColumn(name = "story_id")
+    @JsonBackReference
     private Story story;
 
     protected Photo() {}

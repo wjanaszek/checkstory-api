@@ -1,7 +1,10 @@
 package org.wjanaszek.checkstory.persistance.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -20,7 +23,8 @@ public class User implements Serializable {
     private String password;
 
     @OneToMany(mappedBy = "owner", cascade = CascadeType.PERSIST)
-    private Set<Story> stories;
+    @JsonManagedReference
+    private Set<Story> stories = new HashSet<>();
 
     protected User() {}
 

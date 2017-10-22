@@ -1,8 +1,12 @@
 package org.wjanaszek.checkstory.persistance.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -13,6 +17,7 @@ public class Story implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    private String title;
     private String description;
     private Double latitude;
     private Double longitude;
@@ -22,14 +27,17 @@ public class Story implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "owner_id")
+    @JsonBackReference
     private User owner;
 
     @OneToMany(mappedBy = "story", fetch = FetchType.LAZY)
-    private Set<Photo> photos;
+    @JsonManagedReference
+    private Set<Photo> photos = new HashSet<>();
 
     protected Story() {}
 
-    public Story(String description, Double latitude, Double longitude, Date startDate, User owner) {
+    public Story(String title, String description, Double latitude, Double longitude, Date startDate, User owner) {
+        this.title = title;
         this.description = description;
         this.latitude = latitude;
         this.longitude = longitude;
@@ -44,6 +52,10 @@ public class Story implements Serializable {
     public void setId(Long id) {
         this.id = id;
     }
+
+    public String getTitle() { return this.title; }
+
+    public void setTitle(String title) { this.title = title; }
 
     public String getDescription() {
         return description;
