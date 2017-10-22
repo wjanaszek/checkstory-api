@@ -1,6 +1,7 @@
 package org.wjanaszek.checkstory.persistance.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
@@ -23,11 +24,12 @@ public class Story implements Serializable {
     private Double longitude;
 
     @Column(name = "start_date")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date startDate;
 
     @ManyToOne
     @JoinColumn(name = "owner_id")
-    @JsonBackReference
+//    @JsonBackReference
     private User owner;
 
     @OneToMany(mappedBy = "story", fetch = FetchType.LAZY)

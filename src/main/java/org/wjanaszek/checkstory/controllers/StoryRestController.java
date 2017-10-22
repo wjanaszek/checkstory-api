@@ -65,7 +65,7 @@ public class StoryRestController {
         Long searchedUserId = Long.valueOf(userId);
         if (userRepository.exists(searchedUserId)) {
             if (storyRepository.exists(id)) {
-                return new ResponseEntity<Story>(storyRepository.findOne(id), null, HttpStatus.OK);
+                return new ResponseEntity<Story>(storyRepository.findOne(id), responseHeaders, HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(null, responseHeaders, HttpStatus.NOT_FOUND);
             }
@@ -87,7 +87,7 @@ public class StoryRestController {
         HttpHeaders responseHeaders = new HttpHeaders();
         if (userRepository.exists(story.getOwner().getId())) {
             if (storyRepository.exists(id)) {
-                return new ResponseEntity<Story>(storyRepository.save(story), null, HttpStatus.OK);
+                return new ResponseEntity<Story>(storyRepository.save(story), responseHeaders, HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(null, responseHeaders, HttpStatus.NOT_FOUND);
             }
