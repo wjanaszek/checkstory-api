@@ -1,7 +1,6 @@
 package org.wjanaszek.checkstory.persistance.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -23,8 +22,8 @@ public class User implements Serializable {
     private String email;
     private String password;
 
-    @OneToMany(mappedBy = "owner", cascade = CascadeType.PERSIST)
-    @JsonBackReference
+    @OneToMany(mappedBy = "owner", cascade = { CascadeType.PERSIST, CascadeType.REMOVE })
+    @JsonIgnore
     private Set<Story> stories = new HashSet<>();
 
     protected User() {}
