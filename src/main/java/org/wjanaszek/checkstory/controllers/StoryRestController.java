@@ -9,6 +9,8 @@ import org.wjanaszek.checkstory.persistance.model.Story;
 import org.wjanaszek.checkstory.persistance.model.User;
 import org.wjanaszek.checkstory.persistance.repository.StoryRepository;
 import org.wjanaszek.checkstory.persistance.repository.UserRepository;
+
+import java.util.List;
 import java.util.Set;
 
 @RestController
@@ -30,9 +32,9 @@ public class StoryRestController {
         if (userId != null) {
             Long searchedUserId = Long.valueOf(userId);
             if (userRepository.exists(searchedUserId)) {
-                //return new ResponseEntity<List<Story>>(storyRepository.findAllByUserId(searchedUserId), responseHeaders, HttpStatus.OK);
-                User user = userRepository.findOne(searchedUserId);
-                return new ResponseEntity<Set<Story>>(user.getStories(), responseHeaders, HttpStatus.OK);
+                return new ResponseEntity<List<Story>>(storyRepository.findAllBelongingToUserByUserId(searchedUserId), responseHeaders, HttpStatus.OK);
+//                User user = userRepository.findOne(searchedUserId);
+//                return new ResponseEntity<Set<Story>>(user.getStories(), responseHeaders, HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(null, responseHeaders, HttpStatus.BAD_REQUEST);
             }

@@ -10,6 +10,7 @@ import java.util.Date;
 public class Photo {
 
     @Id
+    @Column(name = "photo_no")
     private Long id;
 
     @ManyToOne
@@ -17,8 +18,11 @@ public class Photo {
     @JsonBackReference
     private Story story;
 
-    @Column(name = "create_date")
+    @Column(name = "create_date", nullable = false)
     private Date createDate;
+
+    @Column(name = "update_date")
+    private Date updateDate;
 
     protected Photo() {}
 }
