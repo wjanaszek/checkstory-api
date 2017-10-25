@@ -9,6 +9,6 @@ import java.util.List;
 
 public interface StoryRepository extends JpaRepository<Story, Long> {
 
-    @Query("select distinct s from Story s where s.owner.id = :userId")
-    List<Story> findAllBelongingToUserByUserId(@Param("userId") Long userId);
+//    @Query("select distinct s from Story s where s.owner.id = :userId")
+//    List<Story> findAllBelongingToUserByUserId(@Param("userId") Long userId);
 }

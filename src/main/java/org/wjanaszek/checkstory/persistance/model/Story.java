@@ -23,21 +23,16 @@ public class Story implements Serializable {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date createDate;
 
-    @ManyToOne
-    @JoinColumn(name = "owner_id")
-    private User owner;
-
-    @OneToMany(mappedBy = "story", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "id.story", fetch = FetchType.LAZY)
     @JsonManagedReference
     private Set<Photo> photos = new HashSet<>();
 
     protected Story() {}
 
-    public Story(String title, String notes, Date createDate, User owner) {
+    public Story(String title, String notes, Date createDate) {
         this.title = title;
         this.notes = notes;
         this.createDate = createDate;
-        this.owner = owner;
     }
 
     public StoryId getId() {
@@ -66,14 +61,6 @@ public class Story implements Serializable {
 
     public void setCreateDate(Date createDate) {
         this.createDate = createDate;
-    }
-
-    public User getOwner() {
-        return this.owner;
-    }
-
-    public void setOwner(User owner) {
-        this.owner = owner;
     }
 
     public Set<Photo> getPhotos() { return this.photos; }
