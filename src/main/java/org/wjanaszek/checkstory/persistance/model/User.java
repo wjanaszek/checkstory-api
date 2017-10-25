@@ -20,6 +20,8 @@ public class User implements Serializable {
 
     @Column(unique = true)
     private String email;
+
+    @Column
     private String password;
 
     @OneToMany(mappedBy = "owner", cascade = { CascadeType.PERSIST, CascadeType.REMOVE })

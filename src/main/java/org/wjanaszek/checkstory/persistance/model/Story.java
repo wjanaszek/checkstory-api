@@ -13,18 +13,15 @@ import java.util.Set;
 @Table(name = "story", schema = "public")
 public class Story implements Serializable {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    @EmbeddedId
+    private StoryId id;
 
     private String title;
-    private String description;
-    private Double latitude;
-    private Double longitude;
+    private String notes;
 
-    @Column(name = "start_date")
+    @Column(name = "create_date")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private Date startDate;
+    private Date createDate;
 
     @ManyToOne
     @JoinColumn(name = "owner_id")
@@ -36,20 +33,18 @@ public class Story implements Serializable {
 
     protected Story() {}
 
-    public Story(String title, String description, Double latitude, Double longitude, Date startDate, User owner) {
+    public Story(String title, String notes, Date createDate, User owner) {
         this.title = title;
-        this.description = description;
-        this.latitude = latitude;
-        this.longitude = longitude;
-        this.startDate = startDate;
+        this.notes = notes;
+        this.createDate = createDate;
         this.owner = owner;
     }
 
-    public Long getId() {
+    public StoryId getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(StoryId id) {
         this.id = id;
     }
 
@@ -57,28 +52,20 @@ public class Story implements Serializable {
 
     public void setTitle(String title) { this.title = title; }
 
-    public String getDescription() {
-        return description;
+    public String getNotes() {
+        return notes;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setNotes(String notes) {
+        this.notes = notes;
     }
 
-    public Double getLatitude() { return this.latitude; }
-
-    public void setLatitude(Double latitude) { this.latitude = latitude; }
-
-    public Double getLongitude() { return this.longitude; }
-
-    public void setLongitude(Double longitude) { this.longitude = longitude; }
-
-    public Date getStartDate() {
-        return startDate;
+    public Date getCreateDate() {
+        return createDate;
     }
 
-    public void setStartDate(Date startDate) {
-        this.startDate = startDate;
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate;
     }
 
     public User getOwner() {
