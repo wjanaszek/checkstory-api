@@ -24,7 +24,7 @@ public class User implements Serializable {
     @Column
     private String password;
 
-    @OneToMany(mappedBy = "id.owner", cascade = { CascadeType.PERSIST, CascadeType.REMOVE })
+    @OneToMany(mappedBy = "owner", cascade = { CascadeType.PERSIST, CascadeType.REMOVE })
     @JsonIgnore
     private Set<Story> stories = new HashSet<>();
 

@@ -50,7 +50,7 @@ public class StoryRestController {
     @RequestMapping(path = "api/stories", method = RequestMethod.POST)
     public ResponseEntity<?> addStory(@RequestBody Story story) {
         HttpHeaders responseHeaders = new HttpHeaders();
-        if (userRepository.exists(story.getId().getOwner().getId())) {
+        if (userRepository.exists(story.getOwner().getId())) {
             return new ResponseEntity<Story>(storyRepository.save(story), responseHeaders, HttpStatus.CREATED);
         } else {
             return new ResponseEntity<>(null, responseHeaders, HttpStatus.BAD_REQUEST);
@@ -87,7 +87,7 @@ public class StoryRestController {
     @RequestMapping(path = "api/stories/{id}", method = RequestMethod.PUT)
     public ResponseEntity<?> updateStory(@PathVariable Long id, @RequestBody Story story) {
         HttpHeaders responseHeaders = new HttpHeaders();
-        if (userRepository.exists(story.getId().getOwner().getId())) {
+        if (userRepository.exists(story.getOwner().getId())) {
             if (storyRepository.exists(id)) {
                 return new ResponseEntity<Story>(storyRepository.save(story), responseHeaders, HttpStatus.OK);
             } else {

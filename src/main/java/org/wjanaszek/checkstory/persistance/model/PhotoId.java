@@ -1,7 +1,5 @@
 package org.wjanaszek.checkstory.persistance.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Objects;
@@ -17,7 +15,6 @@ public class PhotoId implements Serializable {
             @JoinColumn(name = "story_number", referencedColumnName = "story_number"),
             @JoinColumn(name = "story_owner", referencedColumnName = "owner_id")
     })
-    @JsonBackReference
     private Story story;
 
 //    @ManyToOne
