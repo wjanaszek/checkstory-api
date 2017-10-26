@@ -48,6 +48,7 @@ public class Photo {
     private Date createDate;
 
     @Column(name = "update_date")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date updateDate;
 
     public Photo() {
