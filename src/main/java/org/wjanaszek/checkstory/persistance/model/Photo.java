@@ -1,6 +1,7 @@
 package org.wjanaszek.checkstory.persistance.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
@@ -43,6 +44,7 @@ public class Photo {
     private String pathToFile;
 
     @Column(name = "create_date", nullable = false)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date createDate;
 
     @Column(name = "update_date")
