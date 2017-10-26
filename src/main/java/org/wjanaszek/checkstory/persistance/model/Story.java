@@ -14,10 +14,23 @@ import java.util.Set;
 @Table(name = "story", schema = "public")
 public class Story implements Serializable {
 
+    /****************** begin of PK **********************************/
+    /*
+     * PK part
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "story_number")
     private Long id;
+
+    /*
+     * PK part
+     */
+    @ManyToOne
+    @JoinColumn(name = "owner_id")
+    @JsonBackReference
+    private User owner;
+    /****************** end of PK **********************************/
 
     @Column(nullable = false)
     private String title;
@@ -33,11 +46,6 @@ public class Story implements Serializable {
     @Column(name = "create_date")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date createDate;
-
-    @ManyToOne
-    @JoinColumn(name = "owner_id")
-    @JsonBackReference
-    private User owner;
 
     @OneToMany(mappedBy = "story", fetch = FetchType.LAZY)
     @JsonManagedReference
