@@ -1,5 +1,6 @@
 package org.wjanaszek.checkstory.persistance.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
@@ -14,20 +15,28 @@ import java.util.Set;
 public class Story implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "story_number")
     private Long id;
 
+    @Column(nullable = false)
     private String title;
-    private String description;
+
+    private String notes;
+
+    @Column(nullable = false)
     private Double latitude;
+
+    @Column(nullable = false)
     private Double longitude;
 
-    @Column(name = "start_date")
+    @Column(name = "create_date")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private Date startDate;
+    private Date createDate;
 
     @ManyToOne
     @JoinColumn(name = "owner_id")
+    @JsonBackReference
     private User owner;
 
     @OneToMany(mappedBy = "story", fetch = FetchType.LAZY)
@@ -36,12 +45,12 @@ public class Story implements Serializable {
 
     protected Story() {}
 
-    public Story(String title, String description, Double latitude, Double longitude, Date startDate, User owner) {
+    public Story(String title, String notes, Double latitude, Double longitude, Date createDate, User owner) {
         this.title = title;
-        this.description = description;
+        this.notes = notes;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.startDate = startDate;
+        this.createDate = createDate;
         this.owner = owner;
     }
 
@@ -57,12 +66,12 @@ public class Story implements Serializable {
 
     public void setTitle(String title) { this.title = title; }
 
-    public String getDescription() {
-        return description;
+    public String getNotes() {
+        return notes;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setNotes(String notes) {
+        this.notes = notes;
     }
 
     public Double getLatitude() { return this.latitude; }
@@ -73,12 +82,12 @@ public class Story implements Serializable {
 
     public void setLongitude(Double longitude) { this.longitude = longitude; }
 
-    public Date getStartDate() {
-        return startDate;
+    public Date getCreateDate() {
+        return createDate;
     }
 
-    public void setStartDate(Date startDate) {
-        this.startDate = startDate;
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate;
     }
 
     public User getOwner() {
