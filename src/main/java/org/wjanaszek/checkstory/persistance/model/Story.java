@@ -18,9 +18,9 @@ public class Story implements Serializable {
     /*
      * PK part
      */
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "story_number")
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     /*

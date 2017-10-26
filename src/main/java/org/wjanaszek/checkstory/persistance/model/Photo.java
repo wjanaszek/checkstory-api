@@ -15,9 +15,9 @@ public class Photo {
     /*
      * PK part
      */
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "photo_number")
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     /*
