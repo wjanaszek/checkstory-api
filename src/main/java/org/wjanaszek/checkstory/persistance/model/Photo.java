@@ -1,6 +1,7 @@
 package org.wjanaszek.checkstory.persistance.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -9,16 +10,36 @@ import java.util.Date;
 @Table(name = "photo", schema = "public")
 public class Photo {
 
+    /****************** begin of PK **********************************/
+    /*
+     * PK part
+     */
     @Id
-    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "photo_number")
     private Long id;
 
+    /*
+     * PK part
+     */
     @ManyToOne
-    @JoinColumn(name = "story_id")
+    @JoinColumn(name = "story_number", nullable = false)
     @JsonBackReference
     private Story story;
 
-    @Column(name = "path_to_file")
+    /*
+     * PK part
+     */
+    @ManyToOne
+    @JoinColumn(name = "owner_id", nullable = false)
+    @JsonIgnore
+    private User owner;
+    /****************** end of PK **********************************/
+
+    @Column(name = "original_photo", nullable = false)
+    private Character originalPhoto;
+
+    @Column(name = "path_to_file", nullable = false)
     private String pathToFile;
 
     @Column(name = "create_date", nullable = false)
@@ -27,11 +48,14 @@ public class Photo {
     @Column(name = "update_date")
     private Date updateDate;
 
-    protected Photo() {}
+    public Photo() {
+    }
 
-    public Photo(Long id, Story story, String pathToFile, Date createDate, Date updateDate) {
+    public Photo(Long id, Story story, User owner, Character originalPhoto, String pathToFile, Date createDate, Date updateDate) {
         this.id = id;
         this.story = story;
+        this.owner = owner;
+        this.originalPhoto = originalPhoto;
         this.pathToFile = pathToFile;
         this.createDate = createDate;
         this.updateDate = updateDate;
@@ -51,6 +75,22 @@ public class Photo {
 
     public void setStory(Story story) {
         this.story = story;
+    }
+
+    public User getOwner() {
+        return owner;
+    }
+
+    public void setOwner(User owner) {
+        this.owner = owner;
+    }
+
+    public Character getOriginalPhoto() {
+        return originalPhoto;
+    }
+
+    public void setOriginalPhoto(Character originalPhoto) {
+        this.originalPhoto = originalPhoto;
     }
 
     public String getPathToFile() {
