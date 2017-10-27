@@ -23,7 +23,7 @@ public class Photo {
     /*
      * PK part
      */
-    @ManyToOne
+    @ManyToOne(cascade = { CascadeType.REMOVE, CascadeType.PERSIST, CascadeType.MERGE })
     @JoinColumn(name = "story_number", nullable = false)
     @JsonBackReference
     private Story story;
@@ -31,7 +31,7 @@ public class Photo {
     /*
      * PK part
      */
-    @ManyToOne
+    @ManyToOne(cascade = { CascadeType.REMOVE, CascadeType.PERSIST, CascadeType.MERGE })
     @JoinColumn(name = "owner_id", nullable = false)
     @JsonIgnore
     private User owner;

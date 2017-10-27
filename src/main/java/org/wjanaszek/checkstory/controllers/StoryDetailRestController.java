@@ -1,10 +1,7 @@
 package org.wjanaszek.checkstory.controllers;
 
-import com.fasterxml.jackson.databind.ser.Serializers;
-import org.json.HTTP;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,17 +17,13 @@ import org.wjanaszek.checkstory.utils.ValidationUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
-//TODO
 @RestController
 public class StoryDetailRestController {
 
@@ -115,13 +108,9 @@ public class StoryDetailRestController {
     @RequestMapping(path = "api/stories/{storyId}/photos/{photoId}", method = RequestMethod.DELETE)
     public ResponseEntity<?> deletePhotoFromStory(@PathVariable Long storyId, @PathVariable Long photoId) {
         HttpHeaders responseHeaders = new HttpHeaders();
-        if (storyRepository.exists(storyId)) {
-            if (photoRepository.exists(photoId)) {
-                photoRepository.delete(photoId);
-                return new ResponseEntity<Object>(null, responseHeaders, HttpStatus.OK);
-            } else {
-                return new ResponseEntity<Object>(null, responseHeaders, HttpStatus.BAD_REQUEST);
-            }
+        if (storyRepository.exists(storyId) && photoRepository.exists(photoId)) {
+            photoRepository.delete(photoId);
+            return new ResponseEntity<Object>(null, responseHeaders, HttpStatus.OK);
         } else {
             return new ResponseEntity<Object>(null, responseHeaders, HttpStatus.BAD_REQUEST);
         }
