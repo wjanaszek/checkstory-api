@@ -56,7 +56,7 @@ public class StoryDetailRestController {
     }
 
     /*
-     * Add photo to story
+     * Add photo to story (release)
      */
     @CrossOrigin
     @RequestMapping(path = "api/stories/{storyId}/photos", method = RequestMethod.POST)
