@@ -18,9 +18,10 @@ public class Story implements Serializable {
     /*
      * PK part
      */
-    @Column(name = "story_number")
+    @Column(name = "story_number", nullable = false)
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "story_number_gen")
+    @SequenceGenerator(name = "story_number_gen", sequenceName = "story_number_seq")
     private Long id;
 
     /*

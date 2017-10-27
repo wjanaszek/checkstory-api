@@ -15,9 +15,10 @@ public class Photo {
     /*
      * PK part
      */
-    @Column(name = "photo_number")
+    @Column(name = "photo_number", nullable = false)
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "photo_number_gen")
+    @SequenceGenerator(name = "photo_number_gen", sequenceName = "photo_number_seq")
     private Long id;
 
     /*
