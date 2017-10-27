@@ -1,5 +1,6 @@
 package org.wjanaszek.checkstory.controllers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpHeaders;
@@ -19,13 +20,10 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 public class StoryDetailRestController {
@@ -56,15 +54,7 @@ public class StoryDetailRestController {
                 Map<String, String> jsonMap = new HashMap<>();
                 Photo photo = photoRepository.findOne(photoId);
                 JsonUtils.addToMap(photo, jsonMap);
-                File file = null;
-                try {
-                    file = ResourceUtils.getFile(photo.getPathToFile());
-                } catch (FileNotFoundException e) {
-                    System.out.println("File not found for " + photo.getId() + ", " + photo.getOwner().getId() + ", " + photo.getStory().getId());
-                    e.printStackTrace();
-                }
-                String encodeImage = Base64.getEncoder().withoutPadding().encodeToString(Files.readAllBytes(file.toPath()));
-                jsonMap.put("content", encodeImage);
+                jsonMap.put("content", getBase64EncodeImage(photo.getPathToFile()));
                 return new ResponseEntity<Map<String, String>>(jsonMap, responseHeaders, HttpStatus.OK);
             } else {
                 return new ResponseEntity<Object>(null, responseHeaders, HttpStatus.BAD_REQUEST);
@@ -134,6 +124,30 @@ public class StoryDetailRestController {
     }
 
     /*
+     * Get all photos from story
+     */
+    @CrossOrigin
+    @RequestMapping(path = "api/stories/{storyId}/photos", method = RequestMethod.GET)
+    public ResponseEntity<?> getAllPhotosFromStory(@PathVariable Long storyId, @RequestParam("userId") String userId) {
+        HttpHeaders responseHeaders = new HttpHeaders();
+        if (storyRepository.exists(storyId) && userRepository.exists(Long.valueOf(userId))) {
+            List<Photo> photosList = photoRepository.findAllBelongingToUserByUserId(Long.valueOf(userId), storyId);
+            Map<String, List<Map<String, String>>> resultJsonMap = new HashMap<>();
+            List<Map<String, String>> tmpList = new ArrayList<>();
+            for (Photo p : photosList) {
+                Map<String, String> jsonMap = new HashMap<>();
+                JsonUtils.addToMap(p, jsonMap);
+                jsonMap.put("content", getBase64EncodeImage(p.getPathToFile()));
+                tmpList.add(jsonMap);
+            }
+            resultJsonMap.put("photos", tmpList);
+            return new ResponseEntity<Map<String, List<Map<String, String>>>>(resultJsonMap, responseHeaders, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<Object>(null, responseHeaders, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    /*
      * Delete photo from story
      */
     @CrossOrigin
@@ -150,6 +164,22 @@ public class StoryDetailRestController {
         } else {
             return new ResponseEntity<Object>(null, responseHeaders, HttpStatus.BAD_REQUEST);
         }
+    }
+
+    private String getBase64EncodeImage(String path) {
+        File file = null;
+        try {
+            file = ResourceUtils.getFile(path);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        String encode = null;
+        try {
+            encode = Base64.getEncoder().withoutPadding().encodeToString(Files.readAllBytes(file.toPath()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return encode;
     }
 
     private void savePhotoOnServer(String path, String base64Content) {
