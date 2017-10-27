@@ -12,14 +12,16 @@ import org.wjanaszek.checkstory.persistance.repository.PhotoRepository;
 import org.wjanaszek.checkstory.persistance.repository.StoryRepository;
 import org.wjanaszek.checkstory.persistance.repository.UserRepository;
 import org.wjanaszek.checkstory.utils.JsonUtils;
-import org.wjanaszek.checkstory.utils.MappingUtils;
 import org.wjanaszek.checkstory.utils.ValidationUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
@@ -38,6 +40,8 @@ public class StoryDetailRestController {
 
     @Autowired
     private Environment environment;
+
+    private static DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 
     /*
      * Get photo from story
@@ -78,7 +82,18 @@ public class StoryDetailRestController {
         HttpHeaders responseHeaders = new HttpHeaders();
         if (storyRepository.exists(storyId) && photoRepository.exists(photoId) && ValidationUtils.validateRequest(data, Photo.class)) {
             Photo photo = photoRepository.findOne(photoId);
-            MappingUtils.mapToModelUpdate(photo, data, storyId);
+            if (data.containsKey("story_number")) {
+                photo.setStory(storyRepository.findOne(Long.valueOf(data.get("story_number"))));
+            }
+            if (data.containsKey("content")) {
+                savePhotoOnServer(photo.getPathToFile(), data.get("content"));
+            }
+            if (data.containsKey("createDate")) {
+                photo.setCreateDate(format.parse(data.get("createDate")));
+            }
+            if (data.containsKey("updateDate")) {
+                photo.setUpdateDate(format.parse(data.get("updateDate")));
+            }
             return new ResponseEntity<Photo>(photoRepository.save(photo), responseHeaders, HttpStatus.OK);
         } else {
             return new ResponseEntity<Object>(null, responseHeaders, HttpStatus.BAD_REQUEST);
@@ -94,7 +109,23 @@ public class StoryDetailRestController {
         HttpHeaders responseHeaders = new HttpHeaders();
         if (storyRepository.exists(storyId) && userRepository.exists(Long.valueOf(data.get("owner_id")))
                 && ValidationUtils.validateRequest(data, Photo.class)) {
-            Photo photo = MappingUtils.mapToModelCreate(data, storyId);
+
+            Photo photo = new Photo();
+            photo.setCreateDate(format.parse(data.get("createDate")));
+            if (!data.get("updateDate").equals("")) {
+                photo.setUpdateDate(format.parse(data.get("updateDate")));
+            }
+            photo.setOriginalPhoto(data.get("originalPhoto").charAt(0));
+            photo.setOwner(userRepository.findOne(Long.valueOf(data.get("owner_id"))));
+            photo.setStory(storyRepository.findOne(Long.valueOf(data.get("story_number"))));
+
+            String path = environment.getProperty("uploadsPath").toString();
+            path += storyId.toString() + "/photos/" + photo.getCreateDate().hashCode();
+            path += "." + data.get("imageType");
+            photo.setPathToFile(path);
+
+            savePhotoOnServer(path, data.get("content"));
+
             return new ResponseEntity<Photo>(photoRepository.save(photo), responseHeaders, HttpStatus.CREATED);
         } else {
             return new ResponseEntity<Object>(null, responseHeaders, HttpStatus.BAD_REQUEST);
@@ -113,6 +144,19 @@ public class StoryDetailRestController {
             return new ResponseEntity<Object>(null, responseHeaders, HttpStatus.OK);
         } else {
             return new ResponseEntity<Object>(null, responseHeaders, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    private void savePhotoOnServer(String path, String base64Content) {
+        try {
+            FileOutputStream imageOutFile = new FileOutputStream(path);
+            byte[] imageByteArray = Base64.getDecoder().decode(base64Content);
+            imageOutFile.write(imageByteArray);
+            imageOutFile.close();
+        }
+        catch (java.io.IOException e) {
+            //System.out.println("Error creating file for " + photo.getId() + ", " + photo.getOwner().getId() + ", " + photo.getStory().getId());
+            e.printStackTrace();
         }
     }
 }
