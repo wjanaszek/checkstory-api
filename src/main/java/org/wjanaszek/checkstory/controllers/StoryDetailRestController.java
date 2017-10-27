@@ -19,6 +19,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -140,6 +141,10 @@ public class StoryDetailRestController {
     public ResponseEntity<?> deletePhotoFromStory(@PathVariable Long storyId, @PathVariable Long photoId) {
         HttpHeaders responseHeaders = new HttpHeaders();
         if (storyRepository.exists(storyId) && photoRepository.exists(photoId)) {
+            File file = new File(photoRepository.findOne(photoId).getPathToFile());
+            if (!file.delete()) {
+                System.out.println("Problem during deleting file");
+            }
             photoRepository.delete(photoId);
             return new ResponseEntity<Object>(null, responseHeaders, HttpStatus.OK);
         } else {
