@@ -1,7 +1,9 @@
 package org.wjanaszek.checkstory.persistance.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 import org.wjanaszek.checkstory.persistance.model.Photo;
 
+@Repository
 public interface PhotoRepository extends JpaRepository<Photo, Long> {
 }

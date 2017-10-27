@@ -2,6 +2,7 @@ package org.wjanaszek.checkstory.utils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Component;
 import org.wjanaszek.checkstory.persistance.model.Photo;
 import org.wjanaszek.checkstory.persistance.repository.PhotoRepository;
 import org.wjanaszek.checkstory.persistance.repository.StoryRepository;
@@ -14,6 +15,7 @@ import java.text.SimpleDateFormat;
 import java.util.Base64;
 import java.util.Map;
 
+@Component
 public class MappingUtils {
 
     @Autowired
@@ -85,5 +87,21 @@ public class MappingUtils {
         if (data.containsKey("updateDate")) {
             photo.setUpdateDate(format.parse(data.get("updateDate")));
         }
+    }
+
+    public static void setUserRepository(UserRepository userRepository) {
+        MappingUtils.userRepository = userRepository;
+    }
+
+    public static void setPhotoRepository(PhotoRepository photoRepository) {
+        MappingUtils.photoRepository = photoRepository;
+    }
+
+    public static void setStoryRepository(StoryRepository storyRepository) {
+        MappingUtils.storyRepository = storyRepository;
+    }
+
+    public static void setEnvironment(Environment environment) {
+        MappingUtils.environment = environment;
     }
 }
