@@ -28,7 +28,6 @@ public class Story implements Serializable {
      */
     @ManyToOne
     @JoinColumn(name = "owner_id")
-    @JsonBackReference
     private User owner;
     /****************** end of PK **********************************/
 

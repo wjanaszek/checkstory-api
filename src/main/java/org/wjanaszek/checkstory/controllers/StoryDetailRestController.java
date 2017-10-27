@@ -155,7 +155,6 @@ public class StoryDetailRestController {
             imageOutFile.close();
         }
         catch (java.io.IOException e) {
-            //System.out.println("Error creating file for " + photo.getId() + ", " + photo.getOwner().getId() + ", " + photo.getStory().getId());
             e.printStackTrace();
         }
     }
