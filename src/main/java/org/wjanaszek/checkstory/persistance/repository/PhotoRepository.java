@@ -11,6 +11,6 @@ import java.util.List;
 @Repository
 public interface PhotoRepository extends JpaRepository<Photo, Long> {
 
-    @Query("select distinct p from Photo p where p.owner.id = :userId and p.story.id = :storyNumber")
+    @Query("select distinct p from Photo p where p.owner.id = :userId and p.story.id = :storyNumber order by p.createDate DESC")
     List<Photo> findAllBelongingToUserByUserId(@Param("userId") Long userId, @Param("storyNumber") Long storyNumber);
 }
