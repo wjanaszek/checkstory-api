@@ -21,7 +21,7 @@ public class Story implements Serializable {
     @Column(name = "story_number", nullable = false)
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "story_number_gen")
-    @SequenceGenerator(name = "story_number_gen", sequenceName = "story_number_seq")
+    @SequenceGenerator(name = "story_number_gen", sequenceName = "story_number_seq", allocationSize = 1)
     private Long id;
 
     /*

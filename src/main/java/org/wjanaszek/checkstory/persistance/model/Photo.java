@@ -18,7 +18,7 @@ public class Photo {
     @Column(name = "photo_number", nullable = false)
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "photo_number_gen")
-    @SequenceGenerator(name = "photo_number_gen", sequenceName = "photo_number_seq")
+    @SequenceGenerator(name = "photo_number_gen", sequenceName = "photo_number_seq", allocationSize = 1)
     private Long id;
 
     /*
@@ -52,10 +52,13 @@ public class Photo {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date updateDate;
 
+    @Column(name = "image_type", nullable = false)
+    private String imageType;
+
     public Photo() {
     }
 
-    public Photo(Long id, Story story, User owner, Character originalPhoto, String pathToFile, Date createDate, Date updateDate) {
+    public Photo(Long id, Story story, User owner, Character originalPhoto, String pathToFile, Date createDate, Date updateDate, String imageType) {
         this.id = id;
         this.story = story;
         this.owner = owner;
@@ -63,6 +66,7 @@ public class Photo {
         this.pathToFile = pathToFile;
         this.createDate = createDate;
         this.updateDate = updateDate;
+        this.imageType = imageType;
     }
 
     public Long getId() {
@@ -119,5 +123,13 @@ public class Photo {
 
     public void setUpdateDate(Date updateDate) {
         this.updateDate = updateDate;
+    }
+
+    public String getImageType() {
+        return imageType;
+    }
+
+    public void setImageType(String imageType) {
+        this.imageType = imageType;
     }
 }
