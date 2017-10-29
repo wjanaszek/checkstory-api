@@ -80,8 +80,11 @@ public class StoryDetailRestController {
             if (data.containsKey("createDate")) {
                 photo.setCreateDate(format.parse(data.get("createDate")));
             }
-            if (data.containsKey("updateDate")) {
+            if (data.containsKey("updateDate") && data.get("updateDate") != null) {
                 photo.setUpdateDate(format.parse(data.get("updateDate")));
+            }
+            if (data.containsKey("originalPhoto")) {
+                photo.setOriginalPhoto(data.get("originalPhoto").charAt(0));
             }
             return new ResponseEntity<Photo>(photoRepository.save(photo), responseHeaders, HttpStatus.OK);
         } else {
