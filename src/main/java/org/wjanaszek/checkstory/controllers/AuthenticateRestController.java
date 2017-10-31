@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.wjanaszek.checkstory.persistance.model.User;
 import org.wjanaszek.checkstory.persistance.repository.UserRepository;
@@ -16,6 +17,9 @@ public class AuthenticateRestController {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
+
     /*
      * Log in user
      */
@@ -24,7 +28,7 @@ public class AuthenticateRestController {
     public ResponseEntity<?> authenticateUser(@RequestBody AuthenticationBodyRequest body) {
         HttpHeaders responseHeaders = new HttpHeaders();
         User user = userRepository.findByLogin(body.getLogin());
-        if (user != null && user.getPassword().equals(body.getPassword())) {
+        if (user != null && user.getPassword().equals(bCryptPasswordEncoder.encode(body.getPassword()))) {
             AuthenticationResponse responseBody = new AuthenticationResponse(user, "fake-jwt-token");
             return new ResponseEntity<AuthenticationResponse>(responseBody, responseHeaders, HttpStatus.OK);
         } else {
