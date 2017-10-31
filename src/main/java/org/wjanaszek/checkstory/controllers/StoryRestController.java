@@ -4,11 +4,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.wjanaszek.checkstory.persistance.model.Story;
 import org.wjanaszek.checkstory.persistance.model.User;
 import org.wjanaszek.checkstory.persistance.repository.StoryRepository;
 import org.wjanaszek.checkstory.persistance.repository.UserRepository;
+import org.wjanaszek.checkstory.utils.AuthenticationFacade;
 
 import java.util.List;
 import java.util.Set;
@@ -22,15 +25,20 @@ public class StoryRestController {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private AuthenticationFacade authenticationFacade;
+
     /*
      * Get all stories of user with specified userId
      */
-    @CrossOrigin
     @RequestMapping(path = "api/stories", method = RequestMethod.GET)
-    public ResponseEntity<?> getStories(@RequestParam("userId") String userId) {
+    public ResponseEntity<?> getStories() {
         HttpHeaders responseHeaders = new HttpHeaders();
-        if (userId != null) {
-            Long searchedUserId = Long.valueOf(userId);
+        User u = null;
+        System.out.println("haha " + authenticationFacade.getAuthentication().getPrincipal());
+        if ((u = userRepository.findByLogin(authenticationFacade.getAuthentication().getName())) != null) {
+//        if (userId != null) {
+            Long searchedUserId = u.getId();
             if (userRepository.exists(searchedUserId)) {
                 return new ResponseEntity<List<Story>>(storyRepository.findAllBelongingToUserByUserId(searchedUserId), responseHeaders, HttpStatus.OK);
 //                User user = userRepository.findOne(searchedUserId);
