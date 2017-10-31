@@ -1,6 +1,5 @@
 package org.wjanaszek.checkstory.security;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpMethod;
@@ -30,6 +29,9 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.cors().and().csrf().disable().authorizeRequests()
+                .antMatchers(HttpMethod.POST, "/api/authenticate").permitAll()      //TODO remove this
+                .antMatchers(HttpMethod.POST, "/api/users/checkLogin").permitAll()
+                .antMatchers(HttpMethod.POST, "/api/users/checkEmail").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/users").permitAll()
                 .anyRequest().authenticated()
                 .and()

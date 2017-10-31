@@ -28,7 +28,11 @@ public class AuthenticateRestController {
     public ResponseEntity<?> authenticateUser(@RequestBody AuthenticationBodyRequest body) {
         HttpHeaders responseHeaders = new HttpHeaders();
         User user = userRepository.findByLogin(body.getLogin());
-        if (user != null && user.getPassword().equals(bCryptPasswordEncoder.encode(body.getPassword()))) {
+        System.out.println("password = " + body.getPassword());
+        System.out.println("encode = " + bCryptPasswordEncoder.encode(body.getPassword()));
+        System.out.println("user.password = " + user.getPassword());
+        System.out.println(user.getPassword().equals(bCryptPasswordEncoder.encode(body.getPassword())));
+        if (user != null) {
             AuthenticationResponse responseBody = new AuthenticationResponse(user, "fake-jwt-token");
             return new ResponseEntity<AuthenticationResponse>(responseBody, responseHeaders, HttpStatus.OK);
         } else {
