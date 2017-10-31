@@ -21,7 +21,6 @@ public class UserRestController {
     /*
      *   Create a user
      */
-    @CrossOrigin
     @RequestMapping(path = "api/users", method = RequestMethod.POST)
     public ResponseEntity<?> add(@RequestBody User input) {
         User resultUser = userRepository.save(new User(input.getLogin(), input.getEmail(), bCryptPasswordEncoder.encode(input.getPassword())));
