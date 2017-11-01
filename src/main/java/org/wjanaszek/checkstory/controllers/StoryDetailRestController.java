@@ -1,6 +1,5 @@
 package org.wjanaszek.checkstory.controllers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpHeaders;
@@ -8,9 +7,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.wjanaszek.checkstory.persistance.model.Photo;
+import org.wjanaszek.checkstory.persistance.model.Story;
+import org.wjanaszek.checkstory.persistance.model.User;
 import org.wjanaszek.checkstory.persistance.repository.PhotoRepository;
 import org.wjanaszek.checkstory.persistance.repository.StoryRepository;
 import org.wjanaszek.checkstory.persistance.repository.UserRepository;
+import org.wjanaszek.checkstory.utils.AuthenticationFacade;
 import org.wjanaszek.checkstory.utils.JsonUtils;
 import org.wjanaszek.checkstory.utils.Utils;
 import org.wjanaszek.checkstory.utils.ValidationUtils;
@@ -38,25 +40,28 @@ public class StoryDetailRestController {
     @Autowired
     private Environment environment;
 
+    @Autowired
+    private AuthenticationFacade authenticationFacade;
+
     private static DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 
     /*
      * Get photo from story
      */
-    @CrossOrigin
     @RequestMapping(path = "api/stories/{storyId}/photos/{photoId}", method = RequestMethod.GET)
     public ResponseEntity<?> getPhotoForStory(@PathVariable Long storyId, @PathVariable Long photoId) throws IOException {
         HttpHeaders responseHeaders = new HttpHeaders();
-        if (storyRepository.exists(storyId)) {
-            if (photoRepository.exists(photoId)) {
+        User user = userRepository.findByLogin(authenticationFacade.getAuthentication().getName());
+        Story story = storyRepository.findOne(storyId);
+        Photo photo = photoRepository.findOne(photoId);
+        if (user != null && story != null && photo != null
+            && user.getId() == story.getOwner().getId()
+            && user.getId() == photo.getOwner().getId()
+            && photo.getStory().getId() == story.getId()) {
                 Map<String, String> jsonMap = new HashMap<>();
-                Photo photo = photoRepository.findOne(photoId);
                 JsonUtils.addToMap(photo, jsonMap);
                 jsonMap.put("content", Utils.getBase64EncodeImage(photo.getPathToFile()));
                 return new ResponseEntity<Map<String, String>>(jsonMap, responseHeaders, HttpStatus.OK);
-            } else {
-                return new ResponseEntity<Object>(null, responseHeaders, HttpStatus.BAD_REQUEST);
-            }
         } else {
             return new ResponseEntity<Object>(null, responseHeaders, HttpStatus.BAD_REQUEST);
         }
@@ -65,12 +70,14 @@ public class StoryDetailRestController {
     /*
      * Update photo in story
      */
-    @CrossOrigin
     @RequestMapping(path = "api/stories/{storyId}/photos/{photoId}", method = RequestMethod.PUT)
     public ResponseEntity<?> updateStoryWithPhoto(@PathVariable Long storyId, @PathVariable Long photoId, @RequestBody Map<String, String> data) throws ParseException {
         HttpHeaders responseHeaders = new HttpHeaders();
-        if (storyRepository.exists(storyId) && photoRepository.exists(photoId) && ValidationUtils.validateRequest(data, Photo.class)) {
-            Photo photo = photoRepository.findOne(photoId);
+        User user = userRepository.findByLogin(authenticationFacade.getAuthentication().getName());
+        Story story = storyRepository.findOne(storyId);
+        Photo photo = photoRepository.findOne(photoId);
+        if (user != null && story != null && photo != null && user.getId() == story.getOwner().getId() && photo.getOwner().getId() == user.getId()
+                && photo.getStory().getId() == story.getId()  && ValidationUtils.validateRequest(data, Photo.class)) {
             if (data.containsKey("storyNumber")) {
                 photo.setStory(storyRepository.findOne(Long.valueOf(data.get("storyNumber"))));
             }
@@ -95,11 +102,12 @@ public class StoryDetailRestController {
     /*
      * Add photo to story
      */
-    @CrossOrigin
     @RequestMapping(path = "api/stories/{storyId}/photos", method = RequestMethod.POST)
     public ResponseEntity<?> addPhotoToStory(@PathVariable Long storyId, @RequestBody Map<String, String> data) throws IOException, ParseException {
         HttpHeaders responseHeaders = new HttpHeaders();
-        if (storyRepository.exists(storyId) && userRepository.exists(Long.valueOf(data.get("owner_id")))
+        User user = userRepository.findByLogin(authenticationFacade.getAuthentication().getName());
+        Story story = storyRepository.findOne(storyId);
+        if (user != null && story != null && user.getId() == story.getId()
                 && ValidationUtils.validateRequest(data, Photo.class)) {
 
             Photo photo = new Photo();
@@ -108,8 +116,8 @@ public class StoryDetailRestController {
                 photo.setUpdateDate(format.parse(data.get("updateDate")));
             }
             photo.setOriginalPhoto(data.get("originalPhoto").charAt(0));
-            photo.setOwner(userRepository.findOne(Long.valueOf(data.get("owner_id"))));
-            photo.setStory(storyRepository.findOne(Long.valueOf(data.get("storyNumber"))));
+            photo.setOwner(user);
+            photo.setStory(story);
 
             String path = environment.getProperty("uploadsPath").toString();
             path += storyId.toString() + "/photos/" + photo.getCreateDate().hashCode();
@@ -129,12 +137,13 @@ public class StoryDetailRestController {
     /*
      * Get all photos from story
      */
-    @CrossOrigin
     @RequestMapping(path = "api/stories/{storyId}/photos", method = RequestMethod.GET)
-    public ResponseEntity<?> getAllPhotosFromStory(@PathVariable Long storyId, @RequestParam("userId") String userId) {
+    public ResponseEntity<?> getAllPhotosFromStory(@PathVariable Long storyId) {
         HttpHeaders responseHeaders = new HttpHeaders();
-        if (storyRepository.exists(storyId) && userRepository.exists(Long.valueOf(userId))) {
-            List<Photo> photosList = photoRepository.findAllBelongingToUserByUserId(Long.valueOf(userId), storyId);
+        User user = userRepository.findByLogin(authenticationFacade.getAuthentication().getName());
+        Story story = storyRepository.findOne(storyId);
+        if (user != null && story != null && user.getId() == story.getOwner().getId()) {
+            List<Photo> photosList = photoRepository.findAllBelongingToUserByUserId(Long.valueOf(user.getId()), storyId);
             Map<String, List<Map<String, String>>> resultJsonMap = new HashMap<>();
             List<Map<String, String>> tmpList = new ArrayList<>();
             for (Photo p : photosList) {
@@ -153,11 +162,14 @@ public class StoryDetailRestController {
     /*
      * Delete photo from story
      */
-    @CrossOrigin
     @RequestMapping(path = "api/stories/{storyId}/photos/{photoId}", method = RequestMethod.DELETE)
     public ResponseEntity<?> deletePhotoFromStory(@PathVariable Long storyId, @PathVariable Long photoId) {
         HttpHeaders responseHeaders = new HttpHeaders();
-        if (storyRepository.exists(storyId) && photoRepository.exists(photoId)) {
+        User user = userRepository.findByLogin(authenticationFacade.getAuthentication().getName());
+        Story story = storyRepository.findOne(storyId);
+        Photo photo = photoRepository.findOne(photoId);
+        if (user != null && story != null && photo != null && user.getId() == story.getOwner().getId()
+                && photo.getOwner().getId() == user.getId() && photo.getStory().getId() == story.getId()) {
             File file = new File(photoRepository.findOne(photoId).getPathToFile());
             if (!file.delete()) {
                 System.out.println("Problem during deleting file");
