@@ -124,8 +124,9 @@ public class UserRestController {
     @RequestMapping(path = "api/users/checkPassword/{id}", method = RequestMethod.POST)
     public ResponseEntity<Boolean> checkPassword(@PathVariable Long id, @RequestBody String password) {
         HttpHeaders responseHeaders = new HttpHeaders();
-        if (password != null) {
-            if (userRepository.findOne(id).getPassword().equals(password)) {
+        User user = userRepository.findByLogin(authenticationFacade.getAuthentication().getName());
+        if (user != null && password != null && user.getId() == id) {
+            if (user.getPassword().equals(bCryptPasswordEncoder.encode(password))) {
                 return new ResponseEntity<Boolean>(true, responseHeaders, HttpStatus.OK);
             } else {
                 return new ResponseEntity<Boolean>(false, responseHeaders, HttpStatus.OK);
