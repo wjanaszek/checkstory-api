@@ -8,6 +8,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.wjanaszek.checkstory.persistance.model.User;
 import org.wjanaszek.checkstory.persistance.repository.UserRepository;
+import org.wjanaszek.checkstory.utils.AuthenticationFacade;
 
 @RestController
 public class UserRestController {
@@ -17,6 +18,9 @@ public class UserRestController {
 
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    @Autowired
+    private AuthenticationFacade authenticationFacade;
 
     /*
      *   Create a user
@@ -29,9 +33,8 @@ public class UserRestController {
     }
 
     /*
-     *   Get list of users
+     *   Get list of users (Admin use only)
      */
-    @CrossOrigin
     @RequestMapping(path = "api/users", method = RequestMethod.GET)
     public ResponseEntity<Iterable<User>> getUsers() {
         HttpHeaders responseHeaders = new HttpHeaders();
@@ -41,12 +44,11 @@ public class UserRestController {
     /*
      * Get user by id
      */
-    @CrossOrigin
     @RequestMapping(path = "api/users/{id}", method = RequestMethod.GET)
     public ResponseEntity<User> getUserById(@PathVariable Long id) {
         User searchedUser = userRepository.findOne(id);
         HttpHeaders responseHeaders = new HttpHeaders();
-        if (searchedUser != null) {
+        if (searchedUser != null && authenticationFacade.getAuthentication().getName().equals(searchedUser.getLogin())) {
             return new ResponseEntity<User>(searchedUser, responseHeaders, HttpStatus.OK);
         } else {
             return new ResponseEntity<User>(null, responseHeaders, HttpStatus.NOT_FOUND);
@@ -56,7 +58,6 @@ public class UserRestController {
     /*
      * Update user with id
      */
-    @CrossOrigin
     @RequestMapping(path = "api/users/{id}", method = RequestMethod.PUT)
     public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User input) {
         HttpHeaders responseHeaders = new HttpHeaders();
@@ -70,11 +71,11 @@ public class UserRestController {
     /*
      * Delete user with id
      */
-    @CrossOrigin
     @RequestMapping(path = "api/users/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<?> removeUser(@PathVariable Long id) {
         HttpHeaders responseHeaders = new HttpHeaders();
-        if(userRepository.exists(id)) {
+        User userToDelete = userRepository.findByLogin(authenticationFacade.getAuthentication().getName());
+        if(userToDelete != null && userToDelete.getId() == id) {
             userRepository.delete(id);
             return new ResponseEntity<Object>(null, responseHeaders, HttpStatus.OK);
         } else {
@@ -85,7 +86,6 @@ public class UserRestController {
     /*
      * Check if login is available for user
      */
-    @CrossOrigin
     @RequestMapping(path = "api/users/checkLogin", method = RequestMethod.POST)
     public ResponseEntity<Boolean> checkIfLoginAvailable(@RequestBody String login) {
         HttpHeaders responseHeaders = new HttpHeaders();
@@ -103,7 +103,6 @@ public class UserRestController {
     /*
      * Check if email is available for user
      */
-    @CrossOrigin
     @RequestMapping(path = "api/users/checkEmail", method = RequestMethod.POST)
     public ResponseEntity<Boolean> checkIfEmailAvailable(@RequestBody String email) {
         HttpHeaders responseHeaders = new HttpHeaders();
