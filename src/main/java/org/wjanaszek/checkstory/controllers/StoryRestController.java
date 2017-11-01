@@ -34,18 +34,10 @@ public class StoryRestController {
     @RequestMapping(path = "api/stories", method = RequestMethod.GET)
     public ResponseEntity<?> getStories() {
         HttpHeaders responseHeaders = new HttpHeaders();
-        User u = null;
+        User user = userRepository.findByLogin(authenticationFacade.getAuthentication().getName());
         System.out.println("haha " + authenticationFacade.getAuthentication().getPrincipal());
-        if ((u = userRepository.findByLogin(authenticationFacade.getAuthentication().getName())) != null) {
-//        if (userId != null) {
-            Long searchedUserId = u.getId();
-            if (userRepository.exists(searchedUserId)) {
-                return new ResponseEntity<List<Story>>(storyRepository.findAllBelongingToUserByUserId(searchedUserId), responseHeaders, HttpStatus.OK);
-//                User user = userRepository.findOne(searchedUserId);
-//                return new ResponseEntity<Set<Story>>(user.getStories(), responseHeaders, HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(null, responseHeaders, HttpStatus.BAD_REQUEST);
-            }
+        if (user != null) {
+            return new ResponseEntity<List<Story>>(storyRepository.findAllBelongingToUserByUserId(user.getId()), responseHeaders, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(null, responseHeaders, HttpStatus.BAD_REQUEST);
         }
@@ -54,11 +46,12 @@ public class StoryRestController {
     /*
      * Add story to user stories
      */
-    @CrossOrigin
     @RequestMapping(path = "api/stories", method = RequestMethod.POST)
     public ResponseEntity<?> addStory(@RequestBody Story story) {
         HttpHeaders responseHeaders = new HttpHeaders();
-        if (userRepository.exists(story.getOwner().getId())) {
+        User user = userRepository.findByLogin(authenticationFacade.getAuthentication().getName());
+        if (user != null) {
+            story.setOwner(user);
             return new ResponseEntity<Story>(storyRepository.save(story), responseHeaders, HttpStatus.CREATED);
         } else {
             return new ResponseEntity<>(null, responseHeaders, HttpStatus.BAD_REQUEST);
@@ -68,16 +61,16 @@ public class StoryRestController {
     /*
      * Get story with specified id (to detail view for example)
      */
-    @CrossOrigin
     @RequestMapping(path = "api/stories/{id}", method = RequestMethod.GET)
-    public ResponseEntity<?> getStoryById(@PathVariable Long id, @RequestParam("userId") String userId) {
+    public ResponseEntity<?> getStoryById(@PathVariable Long id) {
         HttpHeaders responseHeaders = new HttpHeaders();
-        Long searchedUserId = Long.valueOf(userId);
-        if (userRepository.exists(searchedUserId)) {
-            if (storyRepository.exists(id)) {
-                return new ResponseEntity<Story>(storyRepository.findOne(id), responseHeaders, HttpStatus.OK);
+        User user = userRepository.findByLogin(authenticationFacade.getAuthentication().getName());
+        if (user != null) {
+            Story story = storyRepository.findOne(id);
+            if (story.getOwner().getId() != user.getId()) {
+                return new ResponseEntity<>(null, responseHeaders, HttpStatus.UNAUTHORIZED);
             } else {
-                return new ResponseEntity<>(null, responseHeaders, HttpStatus.NOT_FOUND);
+                return new ResponseEntity<Story>(story, responseHeaders, HttpStatus.OK);
             }
         } else {
             return new ResponseEntity<>(null, responseHeaders, HttpStatus.BAD_REQUEST);
@@ -91,11 +84,11 @@ public class StoryRestController {
     /*
      * Update story with id
      */
-    @CrossOrigin
     @RequestMapping(path = "api/stories/{id}", method = RequestMethod.PUT)
     public ResponseEntity<?> updateStory(@PathVariable Long id, @RequestBody Story story) {
         HttpHeaders responseHeaders = new HttpHeaders();
-        if (userRepository.exists(story.getOwner().getId())) {
+        User user = userRepository.findByLogin(authenticationFacade.getAuthentication().getName());
+        if (user != null && userRepository.exists(story.getOwner().getId()) && story.getOwner().getId() == user.getId()) {
             if (storyRepository.exists(id)) {
                 return new ResponseEntity<Story>(storyRepository.save(story), responseHeaders, HttpStatus.OK);
             } else {
@@ -109,11 +102,12 @@ public class StoryRestController {
     /*
      * Delete story with id
      */
-    @CrossOrigin
     @RequestMapping(path = "api/stories/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteStory(@PathVariable Long id) {
         HttpHeaders responseHeaders = new HttpHeaders();
-        if (storyRepository.exists(id)) {
+        User user = userRepository.findByLogin(authenticationFacade.getAuthentication().getName());
+        Story story = storyRepository.findOne(id);
+        if (user != null && story != null && user.getId() == story.getOwner().getId()) {
             storyRepository.delete(id);
             return new ResponseEntity<>(null, responseHeaders, HttpStatus.OK);
         } else {
