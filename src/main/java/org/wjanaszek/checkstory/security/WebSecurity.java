@@ -15,6 +15,8 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.wjanaszek.checkstory.persistance.repository.UserRepository;
 
+import java.util.Arrays;
+
 @EnableWebSecurity
 @ComponentScan(basePackages = { "org.wjanaszek.checkstory.persistance.repository", "org.wjanaszek.checkstory" })
 public class WebSecurity extends WebSecurityConfigurerAdapter {
@@ -50,7 +52,11 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", new CorsConfiguration().applyPermitDefaultValues());
+        CorsConfiguration corsConfiguration = new CorsConfiguration();
+        corsConfiguration.applyPermitDefaultValues();
+        corsConfiguration.setAllowedMethods(Arrays.asList("OPTIONS", "PUT", "POST", "GET", "DELETE"));
+        corsConfiguration.setAllowedOrigins(Arrays.asList("http://localhost:4200", "*"));
+        source.registerCorsConfiguration("/**", corsConfiguration);
         return source;
     }
 }
