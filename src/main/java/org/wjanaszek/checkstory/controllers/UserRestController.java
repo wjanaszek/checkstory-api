@@ -61,10 +61,11 @@ public class UserRestController {
     @RequestMapping(path = "api/users/{id}", method = RequestMethod.PUT)
     public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User input) {
         HttpHeaders responseHeaders = new HttpHeaders();
-        if (!id.equals(input.getId())) {
-            return new ResponseEntity<User>(input, null, HttpStatus.BAD_REQUEST);
-        } else {
+        User user = userRepository.findByLogin(authenticationFacade.getAuthentication().getName());
+        if (user != null && id.equals(input.getId()) && user.getId() == id) {
             return new ResponseEntity<User>(userRepository.save(input), responseHeaders, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<User>(null, responseHeaders, HttpStatus.BAD_REQUEST);
         }
     }
 
