@@ -62,8 +62,12 @@ public class UserRestController {
     public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User input) {
         HttpHeaders responseHeaders = new HttpHeaders();
         User user = userRepository.findByLogin(authenticationFacade.getAuthentication().getName());
-        if (user != null && id.equals(input.getId()) && user.getId() == id) {
-            return new ResponseEntity<User>(userRepository.save(input), responseHeaders, HttpStatus.OK);
+        // TODO add feature to change email
+        if (user != null && id.equals(input.getId()) && user.getId() == id && input.getId() == user.getId()) {
+            if (!bCryptPasswordEncoder.matches(input.getPassword(), user.getPassword())) {
+                user.setPassword(bCryptPasswordEncoder.encode(input.getPassword()));
+            }
+            return new ResponseEntity<User>(userRepository.save(user), responseHeaders, HttpStatus.OK);
         } else {
             return new ResponseEntity<User>(null, responseHeaders, HttpStatus.BAD_REQUEST);
         }
@@ -126,7 +130,7 @@ public class UserRestController {
         HttpHeaders responseHeaders = new HttpHeaders();
         User user = userRepository.findByLogin(authenticationFacade.getAuthentication().getName());
         if (user != null && password != null && user.getId() == id) {
-            if (user.getPassword().equals(bCryptPasswordEncoder.encode(password))) {
+            if (bCryptPasswordEncoder.matches(password, user.getPassword())) {
                 return new ResponseEntity<Boolean>(true, responseHeaders, HttpStatus.OK);
             } else {
                 return new ResponseEntity<Boolean>(false, responseHeaders, HttpStatus.OK);

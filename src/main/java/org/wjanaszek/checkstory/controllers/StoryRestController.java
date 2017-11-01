@@ -35,7 +35,6 @@ public class StoryRestController {
     public ResponseEntity<?> getStories() {
         HttpHeaders responseHeaders = new HttpHeaders();
         User user = userRepository.findByLogin(authenticationFacade.getAuthentication().getName());
-        System.out.println("haha " + authenticationFacade.getAuthentication().getPrincipal());
         if (user != null) {
             return new ResponseEntity<List<Story>>(storyRepository.findAllBelongingToUserByUserId(user.getId()), responseHeaders, HttpStatus.OK);
         } else {
