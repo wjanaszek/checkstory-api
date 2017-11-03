@@ -183,6 +183,15 @@ public class StoryDetailRestController {
 
     private void savePhotoOnServer(String path, String base64Content) {
         try {
+            String dirPath = "";
+            String[] pathParts = path.split("/");
+            for (int i = 0; i < pathParts.length - 1; i++) {
+                dirPath += pathParts[i] + "/";
+            }
+
+            // create directories if not exist
+            new File(dirPath).mkdirs();
+
             FileOutputStream imageOutFile = new FileOutputStream(path);
             byte[] imageByteArray = Base64.getDecoder().decode(base64Content);
             imageOutFile.write(imageByteArray);
