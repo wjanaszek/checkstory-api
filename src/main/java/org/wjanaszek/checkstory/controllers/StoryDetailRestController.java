@@ -107,7 +107,7 @@ public class StoryDetailRestController {
         HttpHeaders responseHeaders = new HttpHeaders();
         User user = userRepository.findByLogin(authenticationFacade.getAuthentication().getName());
         Story story = storyRepository.findOne(storyId);
-        if (user != null && story != null && user.getId() == story.getId()
+        if (user != null && story != null && user.getId() == story.getOwner().getId()
                 && ValidationUtils.validateRequest(data, Photo.class)) {
 
             Photo photo = new Photo();
