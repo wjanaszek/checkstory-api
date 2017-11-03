@@ -66,7 +66,7 @@ public class StoryRestController {
         User user = userRepository.findByLogin(authenticationFacade.getAuthentication().getName());
         if (user != null) {
             Story story = storyRepository.findOne(id);
-            if (story.getOwner().getId() != user.getId()) {
+            if (story == null || story.getOwner().getId() != user.getId()) {
                 return new ResponseEntity<>(null, responseHeaders, HttpStatus.UNAUTHORIZED);
             } else {
                 return new ResponseEntity<Story>(story, responseHeaders, HttpStatus.OK);
