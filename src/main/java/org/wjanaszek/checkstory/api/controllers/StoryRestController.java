@@ -1,11 +1,9 @@
-package org.wjanaszek.checkstory.controllers;
+package org.wjanaszek.checkstory.api.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.wjanaszek.checkstory.persistance.model.Story;
 import org.wjanaszek.checkstory.persistance.model.User;
@@ -14,7 +12,6 @@ import org.wjanaszek.checkstory.persistance.repository.UserRepository;
 import org.wjanaszek.checkstory.utils.AuthenticationFacade;
 
 import java.util.List;
-import java.util.Set;
 
 @RestController
 public class StoryRestController {
