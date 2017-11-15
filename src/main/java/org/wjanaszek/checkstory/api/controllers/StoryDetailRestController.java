@@ -1,6 +1,5 @@
 package org.wjanaszek.checkstory.api.controllers;
 
-import org.json.HTTP;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpHeaders;
@@ -44,8 +43,12 @@ public class StoryDetailRestController {
 
     private static DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 
-    /*
+    /**
      * Get photo from story
+     * @param storyId
+     * @param photoId
+     * @return
+     * @throws IOException
      */
     @RequestMapping(path = "api/stories/{storyId}/photos/{photoId}", method = RequestMethod.GET)
     public ResponseEntity<?> getPhotoForStory(@PathVariable Long storyId, @PathVariable Long photoId) throws IOException {
@@ -66,8 +69,13 @@ public class StoryDetailRestController {
         }
     }
 
-    /*
+    /**
      * Update photo in story
+     * @param storyId
+     * @param photoId
+     * @param data
+     * @return
+     * @throws ParseException
      */
     @RequestMapping(path = "api/stories/{storyId}/photos/{photoId}", method = RequestMethod.PUT)
     public ResponseEntity<?> updateStoryWithPhoto(@PathVariable Long storyId, @PathVariable Long photoId, @RequestBody Map<String, String> data) throws ParseException {
@@ -98,8 +106,13 @@ public class StoryDetailRestController {
         }
     }
 
-    /*
+    /**
      * Add photo to story
+     * @param storyId
+     * @param data
+     * @return
+     * @throws IOException
+     * @throws ParseException
      */
     @RequestMapping(path = "api/stories/{storyId}/photos", method = RequestMethod.POST)
     public ResponseEntity<?> addPhotoToStory(@PathVariable Long storyId, @RequestBody Map<String, String> data) throws IOException, ParseException {
@@ -119,7 +132,7 @@ public class StoryDetailRestController {
             photo.setStory(story);
 
             String path = environment.getProperty("uploadsPath").toString();
-            path += storyId.toString() + "/photos/" + photo.getCreateDate().hashCode();
+            path += storyId.toString() + "/photos/" + photo.getCreateDate().hashCode() + UUID.randomUUID();
             path += "." + data.get("imageType");
             photo.setPathToFile(path);
 
