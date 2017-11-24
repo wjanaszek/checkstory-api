@@ -2,6 +2,7 @@ package org.wjanaszek.checkstory.persistance.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
@@ -29,6 +30,7 @@ public class Story implements Serializable {
      */
     @ManyToOne
     @JoinColumn(name = "owner_id")
+    @JsonIgnore
     private User owner;
     /****************** end of PK **********************************/
 

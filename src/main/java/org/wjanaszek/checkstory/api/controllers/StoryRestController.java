@@ -25,8 +25,9 @@ public class StoryRestController {
     @Autowired
     private AuthenticationFacade authenticationFacade;
 
-    /*
+    /**
      * Get all stories of user with specified userId
+     * @return
      */
     @RequestMapping(path = "api/stories", method = RequestMethod.GET)
     public ResponseEntity<?> getStories() {
@@ -39,8 +40,10 @@ public class StoryRestController {
         }
     }
 
-    /*
+    /**
      * Add story to user stories
+     * @param story
+     * @return
      */
     @RequestMapping(path = "api/stories", method = RequestMethod.POST)
     public ResponseEntity<?> addStory(@RequestBody Story story) {
@@ -54,8 +57,10 @@ public class StoryRestController {
         }
     }
 
-    /*
+    /**
      * Get story with specified id (to detail view for example)
+     * @param id
+     * @return
      */
     @RequestMapping(path = "api/stories/{id}", method = RequestMethod.GET)
     public ResponseEntity<?> getStoryById(@PathVariable Long id) {
@@ -77,8 +82,11 @@ public class StoryRestController {
 //    @RequestMapping(path = "api/stories/{id}", method = RequestMethod.POST)
 //    public ResponseEntity<?> addStory(@RequestParam Long )
 
-    /*
+    /**
      * Update story with id
+     * @param id
+     * @param story
+     * @return
      */
     @RequestMapping(path = "api/stories/{id}", method = RequestMethod.PUT)
     public ResponseEntity<?> updateStory(@PathVariable Long id, @RequestBody Story story) {
@@ -95,8 +103,10 @@ public class StoryRestController {
         }
     }
 
-    /*
+    /**
      * Delete story with id
+     * @param id
+     * @return
      */
     @RequestMapping(path = "api/stories/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteStory(@PathVariable Long id) {

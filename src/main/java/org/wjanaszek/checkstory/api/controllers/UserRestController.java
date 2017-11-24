@@ -22,8 +22,10 @@ public class UserRestController {
     @Autowired
     private AuthenticationFacade authenticationFacade;
 
-    /*
-     *   Create a user
+    /**
+     * Create a user
+     * @param input
+     * @return
      */
     @RequestMapping(path = "api/users", method = RequestMethod.POST)
     public ResponseEntity<?> add(@RequestBody User input) {
@@ -32,8 +34,9 @@ public class UserRestController {
         return new ResponseEntity<User>(resultUser, responseHeaders, HttpStatus.CREATED);
     }
 
-    /*
-     *   Get list of users (Admin use only)
+    /**
+     * Get list of users (Admin use only)
+     * @return
      */
     @RequestMapping(path = "api/users", method = RequestMethod.GET)
     public ResponseEntity<Iterable<User>> getUsers() {
@@ -41,8 +44,10 @@ public class UserRestController {
         return new ResponseEntity<Iterable<User>>(userRepository.findAll(), responseHeaders, HttpStatus.OK);
     }
 
-    /*
+    /**
      * Get user by id
+     * @param id
+     * @return
      */
     @RequestMapping(path = "api/users/{id}", method = RequestMethod.GET)
     public ResponseEntity<User> getUserById(@PathVariable Long id) {
@@ -55,8 +60,11 @@ public class UserRestController {
         }
     }
 
-    /*
+    /**
      * Update user with id
+     * @param id
+     * @param input
+     * @return
      */
     @RequestMapping(path = "api/users/{id}", method = RequestMethod.PUT)
     public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User input) {
@@ -73,8 +81,10 @@ public class UserRestController {
         }
     }
 
-    /*
+    /**
      * Delete user with id
+     * @param id
+     * @return
      */
     @RequestMapping(path = "api/users/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<?> removeUser(@PathVariable Long id) {
@@ -88,8 +98,10 @@ public class UserRestController {
         }
     }
 
-    /*
+    /**
      * Check if login is available for user
+     * @param login
+     * @return
      */
     @RequestMapping(path = "api/users/checkLogin", method = RequestMethod.POST)
     public ResponseEntity<Boolean> checkIfLoginAvailable(@RequestBody String login) {
@@ -105,8 +117,10 @@ public class UserRestController {
         }
     }
 
-    /*
-     * Check if email is available for user
+    /**
+     * Check if login is available for user
+     * @param email
+     * @return
      */
     @RequestMapping(path = "api/users/checkEmail", method = RequestMethod.POST)
     public ResponseEntity<Boolean> checkIfEmailAvailable(@RequestBody String email) {
@@ -122,8 +136,11 @@ public class UserRestController {
         }
     }
 
-    /*
+    /**
      * Check if password is correct for user in change password action
+     * @param id
+     * @param password
+     * @return
      */
     @RequestMapping(path = "api/users/checkPassword/{id}", method = RequestMethod.POST)
     public ResponseEntity<Boolean> checkPassword(@PathVariable Long id, @RequestBody String password) {
