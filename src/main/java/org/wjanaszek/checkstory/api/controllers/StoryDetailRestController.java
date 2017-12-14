@@ -156,6 +156,7 @@ public class StoryDetailRestController {
         HttpHeaders responseHeaders = new HttpHeaders();
         User user = userRepository.findByLogin(authenticationFacade.getAuthentication().getName());
         Story story = storyRepository.findOne(storyId);
+        // @TODO temporary solution - add owner_id to story or not (to discuss)
         if (user != null && story != null && user.getId() == story.getOwner().getId()) {
             List<Photo> photosList = photoRepository.findAllBelongingToUserByUserId(Long.valueOf(user.getId()), storyId);
             Map<String, List<Map<String, String>>> resultJsonMap = new HashMap<>();
@@ -215,7 +216,8 @@ public class StoryDetailRestController {
             ImagesCompareResult result = new ImagesCompareResult();
             result.setContent(ImagesCompare.getBase64EncodedResultImage(
                     Utils.getBase64EncodeImage(originalPhoto.getPathToFile()), originalPhoto.getImageType(),
-                    Utils.getBase64EncodeImage(modifiedPhoto.getPathToFile()), modifiedPhoto.getImageType()));
+                    Utils.getBase64EncodeImage(modifiedPhoto.getPathToFile()), modifiedPhoto.getImageType(),
+                    payload.getResize(), payload.getBoundingRectangles()));
             result.setImageType("jpg");
             return new ResponseEntity<ImagesCompareResult>(result, responseHeaders, HttpStatus.OK);
         } else {

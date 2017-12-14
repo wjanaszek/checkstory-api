@@ -30,7 +30,7 @@ public class Story implements Serializable {
      */
     @ManyToOne
     @JoinColumn(name = "owner_id")
-    @JsonIgnore
+    // @JsonIgnore
     private User owner;
     /****************** end of PK **********************************/
 

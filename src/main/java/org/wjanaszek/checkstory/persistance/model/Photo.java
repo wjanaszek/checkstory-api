@@ -34,7 +34,7 @@ public class Photo {
      */
     @ManyToOne
     @JoinColumn(name = "owner_id", nullable = false)
-    @JsonIgnore
+    // @JsonIgnore
     private User owner;
     /****************** end of PK **********************************/
 

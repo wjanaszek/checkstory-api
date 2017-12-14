@@ -92,8 +92,10 @@ public class StoryRestController {
     public ResponseEntity<?> updateStory(@PathVariable Long id, @RequestBody Story story) {
         HttpHeaders responseHeaders = new HttpHeaders();
         User user = userRepository.findByLogin(authenticationFacade.getAuthentication().getName());
+        // @TODO temporary solution - send owner_id, but only this in story
         if (user != null && userRepository.exists(story.getOwner().getId()) && story.getOwner().getId() == user.getId()) {
             if (storyRepository.exists(id)) {
+                story.setOwner(user);
                 return new ResponseEntity<Story>(storyRepository.save(story), responseHeaders, HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(null, responseHeaders, HttpStatus.NOT_FOUND);
@@ -115,7 +117,7 @@ public class StoryRestController {
         Story story = storyRepository.findOne(id);
         if (user != null && story != null && user.getId() == story.getOwner().getId()) {
             storyRepository.delete(id);
-            return new ResponseEntity<>(null, responseHeaders, HttpStatus.OK);
+            return new ResponseEntity<>(story, responseHeaders, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(null, responseHeaders, HttpStatus.NOT_FOUND);
         }
