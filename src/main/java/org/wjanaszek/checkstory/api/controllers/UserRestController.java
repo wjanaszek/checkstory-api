@@ -137,7 +137,7 @@ public class UserRestController {
     }
 
     /**
-     * Check if password is correct for user in change password action
+     * Check if password is correct for user in change password actionf
      * @param id
      * @param password
      * @return

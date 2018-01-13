@@ -65,7 +65,7 @@ public class StoryDetailRestController {
                 jsonMap.put("content", Utils.getBase64EncodeImage(photo.getPathToFile()));
                 return new ResponseEntity<Map<String, String>>(jsonMap, responseHeaders, HttpStatus.OK);
         } else {
-            return new ResponseEntity<Object>(null, responseHeaders, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<Object>("Error", responseHeaders, HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -102,7 +102,7 @@ public class StoryDetailRestController {
             }
             return new ResponseEntity<Photo>(photoRepository.save(photo), responseHeaders, HttpStatus.OK);
         } else {
-            return new ResponseEntity<Object>(null, responseHeaders, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<Object>("Error", responseHeaders, HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -140,9 +140,22 @@ public class StoryDetailRestController {
 
             savePhotoOnServer(path, data.get("content"));
 
-            return new ResponseEntity<Photo>(photoRepository.save(photo), responseHeaders, HttpStatus.CREATED);
+            photoRepository.save(photo);
+
+            Long photoId = photo.getId();
+            // System.out.println("photoId = " + photoId);
+            Map<String, String> response = new HashMap<>();
+            JsonUtils.addToMap(photo, response);
+            response.put("content", Utils.getBase64EncodeImage(photo.getPathToFile()));
+//            response.put("id", photoId.toString());
+//            response.put("content", Utils.getBase64EncodeImage(photo.getPathToFile()));
+//            response.put("createDate", String.valueOf(photo.getCreateDate()));
+//            System.out.println("createDate = " + String.valueOf(photoRepository.getOne(photo.getId()).getCreateDate()));
+//            response.put("imageType", photo.getImageType());
+
+            return new ResponseEntity<Map<String, String>>(response, responseHeaders, HttpStatus.CREATED);
         } else {
-            return new ResponseEntity<Object>(null, responseHeaders, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<Object>("Error", responseHeaders, HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -170,7 +183,7 @@ public class StoryDetailRestController {
             resultJsonMap.put("photos", tmpList);
             return new ResponseEntity<Map<String, List<Map<String, String>>>>(resultJsonMap, responseHeaders, HttpStatus.OK);
         } else {
-            return new ResponseEntity<Object>(null, responseHeaders, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<Object>("Error", responseHeaders, HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -195,7 +208,7 @@ public class StoryDetailRestController {
             photoRepository.delete(photoId);
             return new ResponseEntity<Object>(null, responseHeaders, HttpStatus.OK);
         } else {
-            return new ResponseEntity<Object>(null, responseHeaders, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<Object>("Error", responseHeaders, HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -214,14 +227,21 @@ public class StoryDetailRestController {
                 && modifiedPhoto != null && modifiedPhoto.getOwner().getId() == user.getId()) {
 
             ImagesCompareResult result = new ImagesCompareResult();
-            result.setContent(ImagesCompare.getBase64EncodedResultImage(
-                    Utils.getBase64EncodeImage(originalPhoto.getPathToFile()), originalPhoto.getImageType(),
-                    Utils.getBase64EncodeImage(modifiedPhoto.getPathToFile()), modifiedPhoto.getImageType(),
-                    payload.getResize(), payload.getBoundingRectangles()));
+            System.out.println(payload.toString());
+            String content = null;
+            try {
+                content = ImagesCompare.getBase64EncodedResultImage(
+                        Utils.getBase64EncodeImage(originalPhoto.getPathToFile()), originalPhoto.getImageType(),
+                        Utils.getBase64EncodeImage(modifiedPhoto.getPathToFile()), modifiedPhoto.getImageType(),
+                        payload.getResize(), payload.getBoundingRectangles());
+            } catch (Exception e) {
+                return new ResponseEntity<String>("error", responseHeaders, HttpStatus.BAD_REQUEST);
+            }
+            result.setContent(content);
             result.setImageType("jpg");
             return new ResponseEntity<ImagesCompareResult>(result, responseHeaders, HttpStatus.OK);
         } else {
-            return new ResponseEntity<Object>(null, responseHeaders, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<Object>("Error", responseHeaders, HttpStatus.BAD_REQUEST);
         }
     }
 
