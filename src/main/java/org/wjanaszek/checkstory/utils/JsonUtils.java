@@ -7,7 +7,7 @@ import java.util.Map;
 public class JsonUtils {
 
     public static void addToMap(Photo photo, Map<String, String> jsonMap) {
-        jsonMap.put("photoNumber", photo.getId().toString());
+        jsonMap.put("id", photo.getId().toString());
         jsonMap.put("storyNumber", photo.getStory().getId().toString());
         jsonMap.put("owner_id", photo.getOwner().getId().toString());
         jsonMap.put("originalPhoto", photo.getOriginalPhoto().toString());

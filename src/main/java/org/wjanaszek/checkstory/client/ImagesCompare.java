@@ -20,7 +20,6 @@ public class ImagesCompare {
         requestBody.put("modifiedImageType", modifiedImageType);
         requestBody.put("resize", resize.toString());
         requestBody.put("boundingRectangles", boundingRectangles.toString());
-        System.out.println("sending to python");
         String resultData = null;
         try {
             resultData = restTemplate.postForObject(IMAGES_COMPARE_SERVICE_URL + "/api/images-compare", requestBody, String.class);

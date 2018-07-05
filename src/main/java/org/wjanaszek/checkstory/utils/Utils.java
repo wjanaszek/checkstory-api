@@ -19,7 +19,7 @@ public class Utils {
         }
         String encode = null;
         try {
-            encode = Base64.getEncoder().withoutPadding().encodeToString(Files.readAllBytes(file.toPath()));
+            encode = Base64.getEncoder().encodeToString(Files.readAllBytes(file.toPath()));
         } catch (IOException e) {
             e.printStackTrace();
         }

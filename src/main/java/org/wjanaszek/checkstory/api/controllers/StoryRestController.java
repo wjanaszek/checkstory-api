@@ -34,6 +34,7 @@ public class StoryRestController {
         HttpHeaders responseHeaders = new HttpHeaders();
         User user = userRepository.findByLogin(authenticationFacade.getAuthentication().getName());
         if (user != null) {
+            System.out.println("Returning stories length " + storyRepository.findAllBelongingToUserByUserId(user.getId()).size());
             return new ResponseEntity<List<Story>>(storyRepository.findAllBelongingToUserByUserId(user.getId()), responseHeaders, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(null, responseHeaders, HttpStatus.BAD_REQUEST);
@@ -78,10 +79,6 @@ public class StoryRestController {
         }
     }
 
-//    Potrzebne?
-//    @RequestMapping(path = "api/stories/{id}", method = RequestMethod.POST)
-//    public ResponseEntity<?> addStory(@RequestParam Long )
-
     /**
      * Update story with id
      * @param id
@@ -103,9 +100,6 @@ public class StoryRestController {
         } else {
             return new ResponseEntity<>(null, responseHeaders, HttpStatus.NOT_FOUND);
         }
-//        } else {
-//            return new ResponseEntity<>(null, responseHeaders, HttpStatus.BAD_REQUEST);
-//        }
     }
 
     /**

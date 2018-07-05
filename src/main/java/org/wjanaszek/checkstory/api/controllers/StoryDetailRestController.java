@@ -119,7 +119,7 @@ public class StoryDetailRestController {
         HttpHeaders responseHeaders = new HttpHeaders();
         User user = userRepository.findByLogin(authenticationFacade.getAuthentication().getName());
         Story story = storyRepository.findOne(storyId);
-        if (user != null && story != null && user.getId() == story.getOwner().getId()
+        if (user != null && story != null && user.getId().equals(story.getOwner().getId())
                 && ValidationUtils.validateRequest(data, Photo.class)) {
 
             Photo photo = new Photo();
@@ -131,7 +131,7 @@ public class StoryDetailRestController {
             photo.setOwner(user);
             photo.setStory(story);
 
-            String path = environment.getProperty("uploadsPath").toString();
+            String path = environment.getProperty("uploadsPath");
             path += storyId.toString() + "/photos/" + photo.getCreateDate().hashCode() + UUID.randomUUID();
             path += "." + data.get("imageType");
             photo.setPathToFile(path);
@@ -139,21 +139,7 @@ public class StoryDetailRestController {
             photo.setImageType(data.get("imageType"));
 
             savePhotoOnServer(path, data.get("content"));
-
-            photoRepository.save(photo);
-
-            Long photoId = photo.getId();
-            // System.out.println("photoId = " + photoId);
-            Map<String, String> response = new HashMap<>();
-            JsonUtils.addToMap(photo, response);
-            response.put("content", Utils.getBase64EncodeImage(photo.getPathToFile()));
-//            response.put("id", photoId.toString());
-//            response.put("content", Utils.getBase64EncodeImage(photo.getPathToFile()));
-//            response.put("createDate", String.valueOf(photo.getCreateDate()));
-//            System.out.println("createDate = " + String.valueOf(photoRepository.getOne(photo.getId()).getCreateDate()));
-//            response.put("imageType", photo.getImageType());
-
-            return new ResponseEntity<Map<String, String>>(response, responseHeaders, HttpStatus.CREATED);
+            return new ResponseEntity<Object>(photoRepository.save(photo), responseHeaders, HttpStatus.CREATED);
         } else {
             return new ResponseEntity<Object>("Error", responseHeaders, HttpStatus.BAD_REQUEST);
         }
@@ -227,7 +213,6 @@ public class StoryDetailRestController {
                 && modifiedPhoto != null && modifiedPhoto.getOwner().getId() == user.getId()) {
 
             ImagesCompareResult result = new ImagesCompareResult();
-            System.out.println(payload.toString());
             String content = null;
             try {
                 content = ImagesCompare.getBase64EncodedResultImage(
@@ -237,8 +222,21 @@ public class StoryDetailRestController {
             } catch (Exception e) {
                 return new ResponseEntity<String>("error", responseHeaders, HttpStatus.BAD_REQUEST);
             }
-            result.setContent(content);
+
+            String path = environment.getProperty("uploadsPath");
+            path += "result-photos/" + UUID.randomUUID();
+            path += ".jpg";
+
+            savePhotoOnServer(path, content);
+
+            System.out.println("path = " + path);
+
+            Map<String, String> jsonMap = new HashMap<>();
+            result.setContent(Utils.getBase64EncodeImage(path));
             result.setImageType("jpg");
+
+//            result.setContent(content);
+//            result.setImageType("jpg");
             return new ResponseEntity<ImagesCompareResult>(result, responseHeaders, HttpStatus.OK);
         } else {
             return new ResponseEntity<Object>("Error", responseHeaders, HttpStatus.BAD_REQUEST);
@@ -257,7 +255,7 @@ public class StoryDetailRestController {
             new File(dirPath).mkdirs();
 
             FileOutputStream imageOutFile = new FileOutputStream(path);
-            byte[] imageByteArray = Base64.getDecoder().decode(base64Content);
+            byte[] imageByteArray = Base64.getMimeDecoder().decode(base64Content);
             imageOutFile.write(imageByteArray);
             imageOutFile.close();
         }
