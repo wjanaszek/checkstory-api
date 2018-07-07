@@ -37,13 +37,16 @@ public class User implements UserDetails {
     private String email;
 
     @Column(name = "enabled")
-    private boolean enabled;
+    private Boolean enabled;
+
+    @Column(name = "admin")
+    private Boolean admin;
 
     @Column(name = "last_password_reset_date")
     private Timestamp lastPasswordResetDate;
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinTable(name = "users_authorities",
+    @JoinTable(name = "users_authorities", schema = "checkstory",
             joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "authority_id", referencedColumnName = "id"))
     private List<Authority> authorities;

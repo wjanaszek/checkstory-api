@@ -16,11 +16,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.wjanaszek.checkstory.domain.User;
 import org.wjanaszek.checkstory.domain.UserTokenState;
-import org.wjanaszek.checkstory.repository.UserRepository;
+import org.wjanaszek.checkstory.request.ChangePasswordRequest;
 import org.wjanaszek.checkstory.request.CreateUserRequest;
 import org.wjanaszek.checkstory.security.TokenHelper;
-import org.wjanaszek.checkstory.request.ChangePasswordRequest;
 import org.wjanaszek.checkstory.security.auth.JwtAuthenticationRequest;
+import org.wjanaszek.checkstory.service.UserService;
 import org.wjanaszek.checkstory.service.implementation.CustomUserDetailsService;
 import org.wjanaszek.checkstory.utils.DeviceProvider;
 
@@ -33,7 +33,7 @@ import java.util.Map;
 @RestController
 @CrossOrigin
 @RequestMapping(value = "api/auth", produces = MediaType.APPLICATION_JSON_VALUE)
-class AuthController {
+public class AuthController {
 
     @Autowired
     private TokenHelper tokenHelper;
@@ -46,10 +46,7 @@ class AuthController {
     private CustomUserDetailsService userDetailsService;
 
     @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private UserService userService;
 
     @Autowired
     private DeviceProvider deviceProvider;
@@ -82,12 +79,7 @@ class AuthController {
 
     @PostMapping(value = "/sign-up")
     public ResponseEntity<?> createUser(@RequestBody CreateUserRequest createUserRequest) {
-        User newUser = new User();
-        newUser.setUsername(createUserRequest.getUsername());
-        newUser.setPassword(passwordEncoder.encode(createUserRequest.getPassword()));
-        newUser.setEmail(createUserRequest.getEmail());
-        newUser.setEnabled(true);
-        userRepository.save(newUser);
+        userService.createUser(createUserRequest);
         Map<String, String> result = new HashMap<>();
         result.put("result", "success");
         return ResponseEntity.accepted().body(result);
