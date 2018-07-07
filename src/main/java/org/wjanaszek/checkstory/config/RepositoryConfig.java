@@ -9,5 +9,5 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EntityScan(basePackages = {"org.wjanaszek.checkstory.domain"})
 @EnableJpaRepositories(basePackages = {"org.wjanaszek.checkstory.repository"})
 @EnableTransactionManagement
-public class RepositoryConfiguration {
+public class RepositoryConfig {
 }
