@@ -10,13 +10,14 @@ import org.wjanaszek.checkstory.utils.TimeProvider;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 public class StoryServiceImpl implements StoryService {
 
     @Autowired
     private TimeProvider timeProvider;
 
-    private DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+    private DateFormat format = new SimpleDateFormat("EEE MMM dd hh:mm:ss zzzz yyyy", Locale.US);
 
     public Story createStoryEntity(CreateStoryRequest createStoryRequest) throws BadRequestException {
         if (createStoryRequest.getTitle() == null || createStoryRequest.getLatitude() == null || createStoryRequest.getLongitude() == null) {

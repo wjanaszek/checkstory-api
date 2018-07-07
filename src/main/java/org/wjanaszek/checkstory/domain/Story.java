@@ -1,6 +1,5 @@
 package org.wjanaszek.checkstory.domain;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -28,7 +27,6 @@ public class Story {
     @ManyToOne
     @JoinColumn(name = "owner_id", nullable = false)
     @JsonIgnore
-    @JsonBackReference
     private User owner;
 
     @Column(nullable = false)
@@ -44,7 +42,7 @@ public class Story {
     private Double longitude;
 
     @Column(name = "create_date", nullable = false)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:MM")
     private Date createDate;
 
     @OneToMany(mappedBy = "story", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE, CascadeType.MERGE})
