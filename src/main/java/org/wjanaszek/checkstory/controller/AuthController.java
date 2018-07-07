@@ -12,11 +12,14 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.wjanaszek.checkstory.domain.User;
 import org.wjanaszek.checkstory.domain.UserTokenState;
+import org.wjanaszek.checkstory.repository.UserRepository;
+import org.wjanaszek.checkstory.request.CreateUserRequest;
 import org.wjanaszek.checkstory.security.TokenHelper;
-import org.wjanaszek.checkstory.security.auth.ChangePasswordRequest;
+import org.wjanaszek.checkstory.request.ChangePasswordRequest;
 import org.wjanaszek.checkstory.security.auth.JwtAuthenticationRequest;
 import org.wjanaszek.checkstory.service.implementation.CustomUserDetailsService;
 import org.wjanaszek.checkstory.utils.DeviceProvider;
@@ -41,6 +44,12 @@ class AuthController {
 
     @Autowired
     private CustomUserDetailsService userDetailsService;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     private DeviceProvider deviceProvider;
@@ -71,7 +80,20 @@ class AuthController {
         return ResponseEntity.ok(new UserTokenState(jws, expiresIn));
     }
 
-    @RequestMapping(value = "/refresh", method = RequestMethod.POST)
+    @PostMapping(value = "/sign-up")
+    public ResponseEntity<?> createUser(@RequestBody CreateUserRequest createUserRequest) {
+        User newUser = new User();
+        newUser.setUsername(createUserRequest.getUsername());
+        newUser.setPassword(passwordEncoder.encode(createUserRequest.getPassword()));
+        newUser.setEmail(createUserRequest.getEmail());
+        newUser.setEnabled(true);
+        userRepository.save(newUser);
+        Map<String, String> result = new HashMap<>();
+        result.put("result", "success");
+        return ResponseEntity.accepted().body(result);
+    }
+
+    @PostMapping(value = "/refresh")
     public ResponseEntity<?> refreshAuthenticationToken(
             HttpServletRequest request,
             HttpServletResponse response,
@@ -95,7 +117,7 @@ class AuthController {
         }
     }
 
-    @RequestMapping(value = "/change-password", method = RequestMethod.POST)
+    @PostMapping(value = "/change-password")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> changePassword(@RequestBody ChangePasswordRequest changePasswordRequest) {
         userDetailsService.changePassword(changePasswordRequest.getOldPassword(), changePasswordRequest.getNewPassword());

@@ -37,7 +37,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private RestAuthenticationEntryPoint restAuthenticationEntryPoint;
 
     @Autowired
-    TokenHelper tokenHelper;
+    private TokenHelper tokenHelper;
 
     @Bean
     @Override
@@ -60,7 +60,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers(
                         HttpMethod.GET,
-                        "api/auth/**",
+                        "/api/auth/**",
                         "/webjars/**",
                         "/*.html",
                         "/favicon.ico",
@@ -68,7 +68,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/**/*.css",
                         "/**/*.js"
                 ).permitAll()
-                .antMatchers("api/auth/**").permitAll()
+                .antMatchers("/api/auth/**").permitAll()
                 .anyRequest().authenticated().and()
                 .addFilterBefore(new TokenAuthenticationFilter(tokenHelper, jwtUserDetailsService), BasicAuthenticationFilter.class);
 
@@ -80,8 +80,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         // TokenAuthenticationFilter will ignore the below paths
         web.ignoring().antMatchers(
                 HttpMethod.POST,
-                "api/auth/login",
-                "api/auth/sign-up"
+                "/api/auth/login",
+                "/api/auth/sign-up"
         );
         web.ignoring().antMatchers(
                 HttpMethod.GET,

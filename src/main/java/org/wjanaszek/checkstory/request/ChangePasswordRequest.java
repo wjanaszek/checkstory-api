@@ -1,4 +1,4 @@
-package org.wjanaszek.checkstory.security.auth;
+package org.wjanaszek.checkstory.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

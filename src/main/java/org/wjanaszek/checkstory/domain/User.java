@@ -1,6 +1,7 @@
 package org.wjanaszek.checkstory.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -47,9 +48,13 @@ public class User implements UserDetails {
             inverseJoinColumns = @JoinColumn(name = "authority_id", referencedColumnName = "id"))
     private List<Authority> authorities;
 
+    @OneToMany(mappedBy = "owner", fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private List<Story> stories;
+
     public void setPassword(String password) {
         Timestamp now = new Timestamp(DateTime.now().getMillis());
-        this.setLastPasswordResetDate( now );
+        this.setLastPasswordResetDate(now);
         this.password = password;
     }
 
