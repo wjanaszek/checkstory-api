@@ -5,7 +5,7 @@ import org.springframework.core.env.Environment;
 import org.wjanaszek.checkstory.persistance.model.Photo;
 import org.wjanaszek.checkstory.persistance.repository.PhotoRepository;
 import org.wjanaszek.checkstory.persistance.repository.StoryRepository;
-import org.wjanaszek.checkstory.persistance.repository.UserRepository;
+// import org.wjanaszek.checkstory.persistance.repository.UserRepository;
 
 import java.io.FileOutputStream;
 import java.text.DateFormat;
@@ -16,8 +16,8 @@ import java.util.Map;
 
 public class MappingUtils {
 
-    @Autowired
-    private static UserRepository userRepository;
+//    @Autowired
+//    private static UserRepository userRepository;
 
     @Autowired
     private static PhotoRepository photoRepository;
@@ -39,7 +39,7 @@ public class MappingUtils {
             photo.setUpdateDate(format.parse(data.get("updateDate")));
         }
         photo.setOriginalPhoto(data.get("originalPhoto").charAt(0));
-        photo.setOwner(userRepository.findOne(Long.valueOf(data.get("owner_id"))));
+//        photo.setOwner(userRepository.findOne(Long.valueOf(data.get("owner_id"))));
         photo.setStory(storyRepository.findOne(Long.valueOf(data.get("story_number"))));
         photoRepository.save(photo);
 
