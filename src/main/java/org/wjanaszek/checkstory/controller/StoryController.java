@@ -6,7 +6,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.wjanaszek.checkstory.domain.Story;
 import org.wjanaszek.checkstory.domain.User;
+import org.wjanaszek.checkstory.exception.BadRequestException;
 import org.wjanaszek.checkstory.repository.StoryRepository;
+import org.wjanaszek.checkstory.request.CreateStoryRequest;
+import org.wjanaszek.checkstory.service.StoryService;
 import org.wjanaszek.checkstory.service.UserService;
 
 import java.security.Principal;
@@ -22,6 +25,9 @@ public class StoryController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private StoryService storyService;
+
     @GetMapping()
     public ResponseEntity<?> getUserStories(Principal principal) {
         User user = userService.findByUsername(principal.getName());
@@ -29,8 +35,15 @@ public class StoryController {
     }
 
     @PostMapping()
-    public ResponseEntity<?> createStory(@RequestBody Story story) {
-        return ResponseEntity.ok(storyRepository.save(story));
+    public ResponseEntity<?> createStory(@RequestBody CreateStoryRequest request, Principal principal) throws BadRequestException {
+        User user = userService.findByUsername(principal.getName());
+        if (user != null) {
+            Story story = storyService.createStoryEntity(request);
+            story.setOwner(user);
+            return ResponseEntity.ok(storyRepository.save(story));
+        } else {
+            throw new BadRequestException();
+        }
     }
 
     @DeleteMapping(value = "{id}")

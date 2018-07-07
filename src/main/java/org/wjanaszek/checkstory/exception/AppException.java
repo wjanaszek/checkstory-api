@@ -23,7 +23,7 @@ public class AppException {
         return new ApiError(400, HttpStatus.BAD_REQUEST.getReasonPhrase() + ": " + e.getMessage());
     }
 
-    @ExceptionHandler(value = {NoHandlerFoundException.class})
+    @ExceptionHandler(value = {NoHandlerFoundException.class, BadRequestException.class})
     @ResponseStatus(code = HttpStatus.BAD_REQUEST)
     public ApiError badRequest(Exception e, HttpServletRequest request, HttpServletResponse response) {
         log.error(e.getMessage());
