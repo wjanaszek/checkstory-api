@@ -33,4 +33,15 @@ public class StoryController {
         return ResponseEntity.ok(storyRepository.save(story));
     }
 
+    @DeleteMapping(value = "{id}")
+    public ResponseEntity<?> removeStory(@PathVariable Long id) {
+        storyRepository.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping(value = "{id}")
+    public ResponseEntity<?> updateStory(@PathVariable Long id, @RequestBody Story story) {
+        return ResponseEntity.ok(storyRepository.save(story));
+    }
+
 }

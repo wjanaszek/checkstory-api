@@ -23,7 +23,6 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         this.userDetailsService = userDetailsService;
     }
 
-
     @Override
     public void doFilterInternal(
             HttpServletRequest request,
