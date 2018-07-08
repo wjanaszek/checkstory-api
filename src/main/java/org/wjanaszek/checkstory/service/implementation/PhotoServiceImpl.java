@@ -109,6 +109,10 @@ public class PhotoServiceImpl implements PhotoService {
                 .collect(Collectors.toList());
     }
 
+    public Photo findOne(Long id) {
+        return photoRepository.findOne(id);
+    }
+
     public PhotoWithContent updatePhoto(
             Story story,
             Long photoId,

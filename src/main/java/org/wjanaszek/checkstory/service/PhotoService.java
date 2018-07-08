@@ -1,5 +1,6 @@
 package org.wjanaszek.checkstory.service;
 
+import org.wjanaszek.checkstory.domain.Photo;
 import org.wjanaszek.checkstory.domain.PhotoWithContent;
 import org.wjanaszek.checkstory.domain.Story;
 import org.wjanaszek.checkstory.exception.BadRequestException;
@@ -16,6 +17,8 @@ public interface PhotoService {
     String getBase64EncodedImage(String path);
 
     String getBase64EncodedImage(byte[] src);
+
+    Photo findOne(Long id);
 
     void removePhoto(Story story, Long photoId) throws NoResourceFoundException;
 
