@@ -23,10 +23,7 @@ import java.nio.file.Files;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Base64;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -44,7 +41,7 @@ public class PhotoServiceImpl implements PhotoService {
     @Autowired
     private TimeProvider timeProvider;
 
-    private DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+    private DateFormat format = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.US);
 
     @Override
     public PhotoWithContent createPhoto(Story story, CreateUpdatePhotoRequest createPhotoRequest) throws NoResourceFoundException {
