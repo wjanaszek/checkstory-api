@@ -7,7 +7,7 @@ import org.wjanaszek.checkstory.domain.Story;
 import org.wjanaszek.checkstory.exception.BadRequestException;
 import org.wjanaszek.checkstory.exception.NoResourceFoundException;
 import org.wjanaszek.checkstory.repository.StoryRepository;
-import org.wjanaszek.checkstory.request.CreateStoryRequest;
+import org.wjanaszek.checkstory.request.CreateUpdateStoryRequest;
 import org.wjanaszek.checkstory.request.CreateUpdatePhotoRequest;
 import org.wjanaszek.checkstory.response.StoryDetailResponse;
 import org.wjanaszek.checkstory.service.PhotoService;
@@ -37,7 +37,7 @@ public class StoryServiceImpl implements StoryService {
         return photoService.createPhoto(story, createPhotoRequest);
     }
 
-    public Story createStoryEntity(CreateStoryRequest createStoryRequest) throws BadRequestException {
+    public Story createStoryEntity(CreateUpdateStoryRequest createStoryRequest) throws BadRequestException {
         if (createStoryRequest.getTitle() == null || createStoryRequest.getLatitude() == null || createStoryRequest.getLongitude() == null) {
             throw new BadRequestException();
         }
@@ -47,11 +47,7 @@ public class StoryServiceImpl implements StoryService {
 
         log.info("Create date: " + createStoryRequest.getCreateDate());
 
-        try {
-            story.setCreateDate(format.parse(createStoryRequest.getCreateDate()));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+        story.setCreateDate(createStoryRequest.getCreateDate());
         story.setLatitude(createStoryRequest.getLatitude());
         story.setLongitude(createStoryRequest.getLongitude());
         story.setNotes(createStoryRequest.getNotes());
@@ -61,6 +57,19 @@ public class StoryServiceImpl implements StoryService {
 
     public StoryDetailResponse getStoryDetails(Long id) {
         return new StoryDetailResponse(photoService.getPhotosWithContentByStoryId(id));
+    }
+
+    public Story update(Long storyId, CreateUpdateStoryRequest updateStoryRequest) throws NoResourceFoundException {
+        Story story = storyRepository.findOne(storyId);
+        if (story == null) {
+            throw new NoResourceFoundException();
+        }
+        story.setTitle(updateStoryRequest.getTitle());
+        story.setNotes(updateStoryRequest.getNotes());
+        story.setLongitude(updateStoryRequest.getLongitude());
+        story.setLatitude(updateStoryRequest.getLatitude());
+        story.setCreateDate(updateStoryRequest.getCreateDate());
+        return storyRepository.save(story);
     }
 
     public Story save(Story story) {

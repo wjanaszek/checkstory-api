@@ -8,7 +8,7 @@ import org.wjanaszek.checkstory.domain.Story;
 import org.wjanaszek.checkstory.domain.User;
 import org.wjanaszek.checkstory.exception.BadRequestException;
 import org.wjanaszek.checkstory.exception.NoResourceFoundException;
-import org.wjanaszek.checkstory.request.CreateStoryRequest;
+import org.wjanaszek.checkstory.request.CreateUpdateStoryRequest;
 import org.wjanaszek.checkstory.request.CreateUpdatePhotoRequest;
 import org.wjanaszek.checkstory.service.StoryService;
 import org.wjanaszek.checkstory.service.UserService;
@@ -33,7 +33,7 @@ public class StoryController {
     }
 
     @PostMapping()
-    public ResponseEntity<?> createStory(@RequestBody CreateStoryRequest request, Principal principal) throws BadRequestException {
+    public ResponseEntity<?> createStory(@RequestBody CreateUpdateStoryRequest request, Principal principal) throws BadRequestException {
         User user = userService.findByUsername(principal.getName());
         if (user != null) {
             Story story = storyService.createStoryEntity(request);
@@ -59,8 +59,11 @@ public class StoryController {
     }
 
     @PutMapping(value = "{id}")
-    public ResponseEntity<?> updateStory(@PathVariable Long id, @RequestBody Story story) {
-        return ResponseEntity.ok(storyService.save(story));
+    public ResponseEntity<?> updateStory(
+            @PathVariable Long id,
+            @RequestBody CreateUpdateStoryRequest updateStoryRequest
+    ) throws NoResourceFoundException {
+        return ResponseEntity.ok(storyService.update(id, updateStoryRequest));
     }
 
     @DeleteMapping(value = "{storyId}/photos/{photoId}")
