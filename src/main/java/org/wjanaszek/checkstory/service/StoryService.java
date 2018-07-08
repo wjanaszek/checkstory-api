@@ -19,6 +19,8 @@ public interface StoryService {
 
     void delete(Long id);
 
+    void removePhotoFromStory(Long storyId, Long photoId) throws NoResourceFoundException;
+
     Story save(Story story);
 
     List<Story> findByOwnerId(Long id);

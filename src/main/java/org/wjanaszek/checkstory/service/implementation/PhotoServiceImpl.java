@@ -138,14 +138,17 @@ public class PhotoServiceImpl implements PhotoService {
         }
     }
 
-    private File loadFile(String path) {
-        File file = null;
-        try {
-            file = ResourceUtils.getFile(path);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+    public void removePhoto(Story story, Long photoId) throws NoResourceFoundException {
+        Photo photo = photoRepository.findOne(photoId);
+        if (photo == null) {
+            throw new NoResourceFoundException();
         }
-        return file;
+        photoRepository.delete(photoId);
+        story.setPhotos(story.getPhotos()
+                .stream()
+                .filter(photo1 -> !photo1.getId().equals(photo.getId()))
+                .collect(Collectors.toSet()));
+        storyRepository.save(story);
     }
 
     public String generateBase64Thumbnail(File file) {
@@ -163,6 +166,16 @@ public class PhotoServiceImpl implements PhotoService {
             e.printStackTrace();
         }
         return getBase64EncodedImage(baos.toByteArray());
+    }
+
+    private File loadFile(String path) {
+        File file = null;
+        try {
+            file = ResourceUtils.getFile(path);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return file;
     }
 
     private void saveImage(String path, String base64Content) {

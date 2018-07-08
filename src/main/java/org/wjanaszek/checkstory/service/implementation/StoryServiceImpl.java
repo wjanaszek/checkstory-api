@@ -71,8 +71,21 @@ public class StoryServiceImpl implements StoryService {
         return storyRepository.findByOwnerId(id);
     }
 
+    // @TODO remove this to remove
     public void delete(Long id) {
         storyRepository.delete(id);
     }
 
+    public void removePhotoFromStory(Long storyId, Long photoId) throws NoResourceFoundException {
+        Story story = storyRepository.findOne(storyId);
+        if (story == null) {
+            throw new NoResourceFoundException();
+        }
+        try {
+            photoService.removePhoto(story, photoId);
+        } catch (NoResourceFoundException e) {
+            throw e;
+        }
+        log.info("Photo removed");
+    }
 }

@@ -63,6 +63,12 @@ public class StoryController {
         return ResponseEntity.ok(storyService.save(story));
     }
 
+    @DeleteMapping(value = "{storyId}/photos/{photoId}")
+    public ResponseEntity<?> removePhoto(@PathVariable Long storyId, @PathVariable Long photoId) throws NoResourceFoundException {
+        storyService.removePhotoFromStory(storyId, photoId);
+        return ResponseEntity.noContent().build();
+    }
+
     @GetMapping(value = "{id}")
     public ResponseEntity<?> getStoryDetails(@PathVariable Long id) {
         return ResponseEntity.ok(storyService.getStoryDetails(id));

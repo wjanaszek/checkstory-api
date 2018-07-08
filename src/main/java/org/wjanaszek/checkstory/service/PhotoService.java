@@ -17,5 +17,7 @@ public interface PhotoService {
 
     String getBase64EncodedImage(byte[] src);
 
+    void removePhoto(Story story, Long photoId) throws NoResourceFoundException;
+
     void updatePhoto(CreateUpdatePhotoRequest updatePhotoRequest) throws BadRequestException, NoResourceFoundException;
 }
