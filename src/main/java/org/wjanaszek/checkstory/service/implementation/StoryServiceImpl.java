@@ -7,15 +7,12 @@ import org.wjanaszek.checkstory.domain.Story;
 import org.wjanaszek.checkstory.exception.BadRequestException;
 import org.wjanaszek.checkstory.exception.NoResourceFoundException;
 import org.wjanaszek.checkstory.repository.StoryRepository;
-import org.wjanaszek.checkstory.request.CreateUpdateStoryRequest;
 import org.wjanaszek.checkstory.request.CreateUpdatePhotoRequest;
+import org.wjanaszek.checkstory.request.CreateUpdateStoryRequest;
 import org.wjanaszek.checkstory.response.StoryDetailResponse;
 import org.wjanaszek.checkstory.service.PhotoService;
 import org.wjanaszek.checkstory.service.StoryService;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.List;
 
 @Slf4j
@@ -26,8 +23,6 @@ public class StoryServiceImpl implements StoryService {
 
     @Autowired
     private StoryRepository storyRepository;
-
-    private DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 
     public PhotoWithContent createPhotoInStory(Long storyId, CreateUpdatePhotoRequest createPhotoRequest) throws NoResourceFoundException {
         Story story = storyRepository.findOne(storyId);
@@ -70,6 +65,18 @@ public class StoryServiceImpl implements StoryService {
         story.setLatitude(updateStoryRequest.getLatitude());
         story.setCreateDate(updateStoryRequest.getCreateDate());
         return storyRepository.save(story);
+    }
+
+    public PhotoWithContent updatePhotoInStory(
+            Long storyId,
+            Long photoId,
+            CreateUpdatePhotoRequest updatePhotoRequest
+    ) throws BadRequestException, NoResourceFoundException {
+        Story story = storyRepository.findOne(storyId);
+        if (story == null) {
+            throw new NoResourceFoundException();
+        }
+        return photoService.updatePhoto(story, photoId, updatePhotoRequest);
     }
 
     public Story save(Story story) {

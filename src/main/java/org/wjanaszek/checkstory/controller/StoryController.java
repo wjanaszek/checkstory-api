@@ -66,6 +66,15 @@ public class StoryController {
         return ResponseEntity.ok(storyService.update(id, updateStoryRequest));
     }
 
+    @PutMapping(value = "{storyId}/photos/{photoId}")
+    public ResponseEntity<?> updatePhotoInStory(
+            @PathVariable Long storyId,
+            @PathVariable Long photoId,
+            @RequestBody CreateUpdatePhotoRequest updatePhotoRequest
+    ) throws BadRequestException, NoResourceFoundException {
+        return ResponseEntity.ok(storyService.updatePhotoInStory(storyId, photoId, updatePhotoRequest));
+    }
+
     @DeleteMapping(value = "{storyId}/photos/{photoId}")
     public ResponseEntity<?> removePhoto(@PathVariable Long storyId, @PathVariable Long photoId) throws NoResourceFoundException {
         storyService.removePhotoFromStory(storyId, photoId);

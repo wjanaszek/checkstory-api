@@ -17,6 +17,7 @@ public class PhotoWithContent {
     private Long id;
     private Long storyId;
     private String content;
+    private Character originalPhoto;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", locale = "pl_PL", timezone = "Europe/Warsaw")
     private Date createDate;

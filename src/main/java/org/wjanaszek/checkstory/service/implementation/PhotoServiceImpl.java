@@ -50,11 +50,7 @@ public class PhotoServiceImpl implements PhotoService {
     public PhotoWithContent createPhoto(Story story, CreateUpdatePhotoRequest createPhotoRequest) throws NoResourceFoundException {
         Photo photo = new Photo();
         PhotoWithContent photoWithContent = null;
-        try {
-            photo.setCreateDate(format.parse(createPhotoRequest.getCreateDate()));
-        } catch (ParseException e) {
-            log.info(e.getMessage());
-        }
+        photo.setCreateDate(createPhotoRequest.getCreateDate());
         photo.setImageType(createPhotoRequest.getImageType());
         photo.setOriginalPhoto(createPhotoRequest.getOriginalPhoto().charAt(0));
         if (story != null) {
@@ -116,8 +112,13 @@ public class PhotoServiceImpl implements PhotoService {
                 .collect(Collectors.toList());
     }
 
-    public void updatePhoto(CreateUpdatePhotoRequest updatePhotoRequest) throws BadRequestException, NoResourceFoundException {
-        Photo photo = photoRepository.findOne(updatePhotoRequest.getId());
+    public PhotoWithContent updatePhoto(
+            Story story,
+            Long photoId,
+            CreateUpdatePhotoRequest updatePhotoRequest
+    ) throws BadRequestException, NoResourceFoundException {
+        Photo photo = photoRepository.findOne(photoId);
+        PhotoWithContent photoWithContent = null;
         if (photo != null) {
             if (updatePhotoRequest.getContent() != null) {
                 saveImage(photo.getPathToFile(), updatePhotoRequest.getContent());
@@ -134,9 +135,22 @@ public class PhotoServiceImpl implements PhotoService {
                 log.error(e.getMessage());
             }
             photoRepository.save(photo);
+
+            story.setPhotos(story.getPhotos()
+                    .stream()
+                    .map(photo1 -> photo1.getId().equals(photo.getId()) ? photo : photo1)
+                    .collect(Collectors.toSet()));
+            storyRepository.save(story);
+
+            photoWithContent = new PhotoWithContent();
+            photoWithContent.setContent(updatePhotoRequest.getContent());
+            photoWithContent.setOriginalPhoto(updatePhotoRequest.getOriginalPhoto().charAt(0));
+            photoWithContent.setCreateDate(updatePhotoRequest.getCreateDate());
+            photoWithContent.setImageType(updatePhotoRequest.getImageType());
         } else {
             throw new NoResourceFoundException();
         }
+        return photoWithContent;
     }
 
     public void removePhoto(Story story, Long photoId) throws NoResourceFoundException {

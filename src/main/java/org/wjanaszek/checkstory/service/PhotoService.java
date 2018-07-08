@@ -19,5 +19,9 @@ public interface PhotoService {
 
     void removePhoto(Story story, Long photoId) throws NoResourceFoundException;
 
-    void updatePhoto(CreateUpdatePhotoRequest updatePhotoRequest) throws BadRequestException, NoResourceFoundException;
+    PhotoWithContent updatePhoto(
+            Story story,
+            Long photoId,
+            CreateUpdatePhotoRequest updatePhotoRequest
+    ) throws BadRequestException, NoResourceFoundException;
 }

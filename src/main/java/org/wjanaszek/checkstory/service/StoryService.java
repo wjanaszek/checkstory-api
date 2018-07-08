@@ -4,8 +4,8 @@ import org.wjanaszek.checkstory.domain.PhotoWithContent;
 import org.wjanaszek.checkstory.domain.Story;
 import org.wjanaszek.checkstory.exception.BadRequestException;
 import org.wjanaszek.checkstory.exception.NoResourceFoundException;
-import org.wjanaszek.checkstory.request.CreateUpdateStoryRequest;
 import org.wjanaszek.checkstory.request.CreateUpdatePhotoRequest;
+import org.wjanaszek.checkstory.request.CreateUpdateStoryRequest;
 import org.wjanaszek.checkstory.response.StoryDetailResponse;
 
 import java.util.List;
@@ -24,6 +24,12 @@ public interface StoryService {
     Story save(Story story);
 
     Story update(Long storyId, CreateUpdateStoryRequest updateStoryRequest) throws NoResourceFoundException;
+
+    PhotoWithContent updatePhotoInStory(
+            Long storyId,
+            Long photoId,
+            CreateUpdatePhotoRequest updatePhotoRequest
+    ) throws BadRequestException, NoResourceFoundException;
 
     List<Story> findByOwnerId(Long id);
 }
