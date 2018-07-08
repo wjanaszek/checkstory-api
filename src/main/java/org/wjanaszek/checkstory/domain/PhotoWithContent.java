@@ -1,19 +1,21 @@
-package org.wjanaszek.checkstory.request;
+package org.wjanaszek.checkstory.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.Date;
 
 @Getter
 @Setter
 @AllArgsConstructor
-public class CreateUpdatePhotoRequest {
+@NoArgsConstructor
+public class PhotoWithContent {
 
     private Long id;
     private String content;
-    private String createDate;
-    private String originalPhoto;
-    private Long storyId;
+    private Date createDate;
     private String imageType;
 
 }

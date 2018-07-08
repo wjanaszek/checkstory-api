@@ -42,7 +42,7 @@ public class Story {
     private Double longitude;
 
     @Column(name = "create_date", nullable = false)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:MM")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", locale = "pl_PL", timezone = "Europe/Warsaw")
     private Date createDate;
 
     @OneToMany(mappedBy = "story", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE, CascadeType.MERGE})

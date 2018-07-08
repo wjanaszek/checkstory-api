@@ -116,4 +116,20 @@ public class AuthController {
         result.put("result", "success");
         return ResponseEntity.accepted().body(result);
     }
+
+    @GetMapping(value = "/check/email")
+    public ResponseEntity<?> checkEmail(@RequestBody String email) {
+        boolean exists = userService.findByEmail(email) != null;
+        Map<String, String> result = new HashMap<>();
+        result.put("result", exists ? "true" : "false");
+        return ResponseEntity.accepted().body(result);
+    }
+
+    @GetMapping(value = "/check/username")
+    public ResponseEntity<?> checkUsername(@RequestBody String username) {
+        boolean exists = userService.findByUsername(username) != null;
+        Map<String, String> result = new HashMap<>();
+        result.put("result", exists ? "true" : "false");
+        return ResponseEntity.accepted().body(result);
+    }
 }

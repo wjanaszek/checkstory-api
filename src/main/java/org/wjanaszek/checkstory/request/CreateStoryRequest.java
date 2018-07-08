@@ -12,4 +12,5 @@ public class CreateStoryRequest {
     private String notes;
     private Double longitude;
     private Double latitude;
+    private String createDate;
 }

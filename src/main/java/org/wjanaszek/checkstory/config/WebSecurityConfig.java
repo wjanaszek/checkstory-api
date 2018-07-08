@@ -85,6 +85,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         );
         web.ignoring().antMatchers(
                 HttpMethod.GET,
+                "/api/auth/check/email",
+                "/api/auth/check/username",
                 "/",
                 "/webjars/**",
                 "/*.html",

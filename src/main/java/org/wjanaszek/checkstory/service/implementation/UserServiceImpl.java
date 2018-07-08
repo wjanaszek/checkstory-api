@@ -37,6 +37,10 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByUsername(username);
     }
 
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
     public User findById(Long id) throws AccessDeniedException, NoResourceFoundException {
         return Optional.of(userRepository.findOne(id)).orElseThrow(NoResourceFoundException::new);
     }

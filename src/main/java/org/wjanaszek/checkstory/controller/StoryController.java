@@ -7,8 +7,9 @@ import org.springframework.web.bind.annotation.*;
 import org.wjanaszek.checkstory.domain.Story;
 import org.wjanaszek.checkstory.domain.User;
 import org.wjanaszek.checkstory.exception.BadRequestException;
-import org.wjanaszek.checkstory.repository.StoryRepository;
+import org.wjanaszek.checkstory.exception.NoResourceFoundException;
 import org.wjanaszek.checkstory.request.CreateStoryRequest;
+import org.wjanaszek.checkstory.request.CreateUpdatePhotoRequest;
 import org.wjanaszek.checkstory.service.StoryService;
 import org.wjanaszek.checkstory.service.UserService;
 
@@ -20,9 +21,6 @@ import java.security.Principal;
 public class StoryController {
 
     @Autowired
-    private StoryRepository storyRepository;
-
-    @Autowired
     private UserService userService;
 
     @Autowired
@@ -31,7 +29,7 @@ public class StoryController {
     @GetMapping()
     public ResponseEntity<?> getUserStories(Principal principal) {
         User user = userService.findByUsername(principal.getName());
-        return ResponseEntity.ok(storyRepository.findByOwnerId(user.getId()));
+        return ResponseEntity.ok(storyService.findByOwnerId(user.getId()));
     }
 
     @PostMapping()
@@ -40,21 +38,34 @@ public class StoryController {
         if (user != null) {
             Story story = storyService.createStoryEntity(request);
             story.setOwner(user);
-            return ResponseEntity.ok(storyRepository.save(story));
+            return ResponseEntity.ok(storyService.save(story));
         } else {
             throw new BadRequestException();
         }
     }
 
+    @PostMapping(value = "{id}")
+    public ResponseEntity<?> createPhotoInStory(
+            @PathVariable Long id,
+            @RequestBody CreateUpdatePhotoRequest createPhotoRequest
+    ) throws NoResourceFoundException {
+        return ResponseEntity.ok(storyService.createPhotoInStory(id, createPhotoRequest));
+    }
+
     @DeleteMapping(value = "{id}")
     public ResponseEntity<?> removeStory(@PathVariable Long id) {
-        storyRepository.delete(id);
+        storyService.delete(id);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping(value = "{id}")
     public ResponseEntity<?> updateStory(@PathVariable Long id, @RequestBody Story story) {
-        return ResponseEntity.ok(storyRepository.save(story));
+        return ResponseEntity.ok(storyService.save(story));
+    }
+
+    @GetMapping(value = "{id}")
+    public ResponseEntity<?> getStoryDetails(@PathVariable Long id) {
+        return ResponseEntity.ok(storyService.getStoryDetails(id));
     }
 
 }
