@@ -107,6 +107,7 @@ public class PhotoServiceImpl implements PhotoService {
                 .map(photo -> {
                     PhotoWithContent photoWithContent = new PhotoWithContent();
                     photoWithContent.setId(photo.getId());
+                    photoWithContent.setStoryId(id);
                     photoWithContent.setCreateDate(photo.getCreateDate());
                     photoWithContent.setImageType(photo.getImageType());
                     photoWithContent.setContent(generateBase64Thumbnail(loadFile(photo.getPathToFile())));
