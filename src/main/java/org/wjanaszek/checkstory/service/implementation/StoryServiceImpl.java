@@ -71,8 +71,7 @@ public class StoryServiceImpl implements StoryService {
         return storyRepository.findByOwnerId(id);
     }
 
-    // @TODO remove this to remove
-    public void delete(Long id) {
+    public void removeStoryWithId(Long id) {
         storyRepository.delete(id);
     }
 

@@ -17,7 +17,7 @@ public interface StoryService {
 
     StoryDetailResponse getStoryDetails(Long id);
 
-    void delete(Long id);
+    void removeStoryWithId(Long id);
 
     void removePhotoFromStory(Long storyId, Long photoId) throws NoResourceFoundException;
 
