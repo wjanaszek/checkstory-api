@@ -10,7 +10,6 @@ import org.wjanaszek.checkstory.exception.BadRequestException;
 import org.wjanaszek.checkstory.exception.NoResourceFoundException;
 import org.wjanaszek.checkstory.request.CreateUpdatePhotoRequest;
 import org.wjanaszek.checkstory.request.CreateUpdateStoryRequest;
-import org.wjanaszek.checkstory.service.PhotoCompareService;
 import org.wjanaszek.checkstory.service.StoryService;
 import org.wjanaszek.checkstory.service.UserService;
 
@@ -26,9 +25,6 @@ public class StoryController {
 
     @Autowired
     private StoryService storyService;
-
-    @Autowired
-    private PhotoCompareService photoCompareService;
 
     @GetMapping()
     public ResponseEntity<?> getUserStories(Principal principal) {
@@ -91,15 +87,6 @@ public class StoryController {
     @GetMapping(value = "{id}")
     public ResponseEntity<?> getStoryDetails(@PathVariable Long id) {
         return ResponseEntity.ok(storyService.getStoryDetails(id));
-    }
-
-    @GetMapping(value = "/compare/{firstId}/with/{secondId}")
-    public ResponseEntity<?> comparePhotos(
-            @PathVariable Long firstId,
-            @PathVariable Long secondId,
-            @RequestParam Integer sensitivity
-    ) throws NoResourceFoundException {
-        return ResponseEntity.ok(photoCompareService.compare(firstId, secondId, sensitivity));
     }
 
 }

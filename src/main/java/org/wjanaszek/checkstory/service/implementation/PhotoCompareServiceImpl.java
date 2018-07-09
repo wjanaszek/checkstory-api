@@ -17,7 +17,7 @@ public class PhotoCompareServiceImpl implements PhotoCompareService {
     private final String IMAGES_COMPARE_SERVICE_URL = "http://localhost:8000";
 
     public PhotoWithContent compare(Long firstId, Long secondId, Integer sensitivity) throws NoResourceFoundException {
-        PhotoWithContent photoWithContent = null;
+        PhotoWithContent photoWithContent = new PhotoWithContent();
         Photo first = photoService.findOne(firstId);
         Photo second = photoService.findOne(secondId);
         if (first == null || second == null) {
