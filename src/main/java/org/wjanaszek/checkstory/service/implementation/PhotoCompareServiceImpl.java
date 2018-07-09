@@ -1,6 +1,7 @@
 package org.wjanaszek.checkstory.service.implementation;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.wjanaszek.checkstory.domain.Photo;
 import org.wjanaszek.checkstory.domain.PhotoWithContent;
@@ -35,10 +36,14 @@ public class PhotoCompareServiceImpl implements PhotoCompareService {
         body.setSecondType(second.getImageType());
         body.setSensitivity(sensitivity);
 
-        resultContent = restTemplate.postForObject(IMAGES_COMPARE_SERVICE_URL + "/api/images-compare", body, String.class);
+        try {
+            resultContent = restTemplate.postForObject(IMAGES_COMPARE_SERVICE_URL + "/api/images-compare", body, String.class);
+        } catch (RestClientException e) {
+            e.printStackTrace();
+        }
 
         photoWithContent.setImageType("jpg");
-        photoWithContent.setContent(resultContent);
+        photoWithContent.setContent(photoService.generateBase64Thumbnail(resultContent));
         return photoWithContent;
     }
 

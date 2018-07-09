@@ -15,6 +15,7 @@ import org.wjanaszek.checkstory.repository.StoryRepository;
 import org.wjanaszek.checkstory.request.CreateUpdatePhotoRequest;
 import org.wjanaszek.checkstory.service.PhotoService;
 import org.wjanaszek.checkstory.utils.TimeProvider;
+import sun.misc.BASE64Decoder;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -42,6 +43,7 @@ public class PhotoServiceImpl implements PhotoService {
     private TimeProvider timeProvider;
 
     private DateFormat format = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.US);
+    private int targetSize = 400;
 
     @Override
     public PhotoWithContent createPhoto(Story story, CreateUpdatePhotoRequest createPhotoRequest) throws NoResourceFoundException {
@@ -174,10 +176,32 @@ public class PhotoServiceImpl implements PhotoService {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        BufferedImage scaledImage = Scalr.resize(srcImage, 400); // Scale image
+        BufferedImage scaledImage = Scalr.resize(srcImage, targetSize); // Scale image
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try {
             ImageIO.write(scaledImage, "jpg", baos);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return getBase64EncodedImage(baos.toByteArray());
+    }
+
+    public String generateBase64Thumbnail(String base64String) {
+        BufferedImage image = null;
+        byte[] imageByte;
+        try {
+            BASE64Decoder decoder = new BASE64Decoder();
+            imageByte = decoder.decodeBuffer(base64String);
+            ByteArrayInputStream bis = new ByteArrayInputStream(imageByte);
+            image = ImageIO.read(bis);
+            bis.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        image = Scalr.resize(image, targetSize);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try {
+            ImageIO.write(image, "jpg", baos);
         } catch (IOException e) {
             e.printStackTrace();
         }

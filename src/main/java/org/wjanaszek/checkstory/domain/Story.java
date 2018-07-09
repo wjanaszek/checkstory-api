@@ -46,7 +46,6 @@ public class Story {
     private Date createDate;
 
     @OneToMany(mappedBy = "story", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE, CascadeType.MERGE})
-    @JsonManagedReference
     private Set<Photo> photos = new HashSet<>();
 
 }
