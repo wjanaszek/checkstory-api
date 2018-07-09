@@ -190,8 +190,7 @@ public class PhotoServiceImpl implements PhotoService {
         BufferedImage image = null;
         byte[] imageByte;
         try {
-            BASE64Decoder decoder = new BASE64Decoder();
-            imageByte = decoder.decodeBuffer(base64String);
+            imageByte = Base64.getMimeDecoder().decode(base64String);
             ByteArrayInputStream bis = new ByteArrayInputStream(imageByte);
             image = ImageIO.read(bis);
             bis.close();
