@@ -85,8 +85,11 @@ public class StoryController {
     }
 
     @GetMapping(value = "{id}")
-    public ResponseEntity<?> getStoryDetails(@PathVariable Long id) {
-        return ResponseEntity.ok(storyService.getStoryDetails(id));
+    public ResponseEntity<?> getStoryDetailsWithPhotos(
+            @PathVariable Long id,
+            @RequestParam(required = false) Boolean withPhotos
+    ) throws NoResourceFoundException {
+        return withPhotos != null ? ResponseEntity.ok(storyService.getStoryDetailsWithPhotos(id)) : ResponseEntity.ok(storyService.getStoryDetails(id));
     }
 
 }

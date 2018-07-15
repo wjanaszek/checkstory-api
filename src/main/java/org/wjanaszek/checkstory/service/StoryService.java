@@ -7,6 +7,7 @@ import org.wjanaszek.checkstory.exception.NoResourceFoundException;
 import org.wjanaszek.checkstory.request.CreateUpdatePhotoRequest;
 import org.wjanaszek.checkstory.request.CreateUpdateStoryRequest;
 import org.wjanaszek.checkstory.response.StoryDetailResponse;
+import org.wjanaszek.checkstory.response.StoryDetailWithPhotosResponse;
 
 import java.util.List;
 
@@ -16,6 +17,8 @@ public interface StoryService {
     PhotoWithContent createPhotoInStory(Long storyId, CreateUpdatePhotoRequest createPhotoRequest) throws NoResourceFoundException;
 
     StoryDetailResponse getStoryDetails(Long id);
+
+    StoryDetailWithPhotosResponse getStoryDetailsWithPhotos(Long id) throws NoResourceFoundException;
 
     void removeStoryWithId(Long id);
 

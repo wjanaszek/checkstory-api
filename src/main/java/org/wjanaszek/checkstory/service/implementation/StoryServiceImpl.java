@@ -10,6 +10,7 @@ import org.wjanaszek.checkstory.repository.StoryRepository;
 import org.wjanaszek.checkstory.request.CreateUpdatePhotoRequest;
 import org.wjanaszek.checkstory.request.CreateUpdateStoryRequest;
 import org.wjanaszek.checkstory.response.StoryDetailResponse;
+import org.wjanaszek.checkstory.response.StoryDetailWithPhotosResponse;
 import org.wjanaszek.checkstory.service.PhotoService;
 import org.wjanaszek.checkstory.service.StoryService;
 
@@ -52,6 +53,22 @@ public class StoryServiceImpl implements StoryService {
 
     public StoryDetailResponse getStoryDetails(Long id) {
         return new StoryDetailResponse(photoService.getPhotosWithContentByStoryId(id));
+    }
+
+    public StoryDetailWithPhotosResponse getStoryDetailsWithPhotos(Long id) throws NoResourceFoundException {
+        Story story = storyRepository.findOne(id);
+        if (story == null) {
+            throw new NoResourceFoundException();
+        }
+        StoryDetailWithPhotosResponse response = new StoryDetailWithPhotosResponse();
+        response.setId(story.getId());
+        response.setCreateDate(story.getCreateDate());
+        response.setLatitude(story.getLatitude());
+        response.setLongitude(story.getLongitude());
+        response.setTitle(story.getTitle());
+        response.setNotes(story.getNotes());
+        response.setPhotos(photoService.getPhotosWithContentByStoryId(id));
+        return response;
     }
 
     public Story update(Long storyId, CreateUpdateStoryRequest updateStoryRequest) throws NoResourceFoundException {
