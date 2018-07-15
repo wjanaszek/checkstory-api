@@ -15,7 +15,6 @@ import org.wjanaszek.checkstory.repository.StoryRepository;
 import org.wjanaszek.checkstory.request.CreateUpdatePhotoRequest;
 import org.wjanaszek.checkstory.service.PhotoService;
 import org.wjanaszek.checkstory.utils.TimeProvider;
-import sun.misc.BASE64Decoder;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -186,7 +185,7 @@ public class PhotoServiceImpl implements PhotoService {
         return getBase64EncodedImage(baos.toByteArray());
     }
 
-    public String generateBase64Thumbnail(String base64String) {
+    public String generateBase64Thumbnail(String base64String, Integer targetSize) {
         BufferedImage image = null;
         byte[] imageByte;
         try {

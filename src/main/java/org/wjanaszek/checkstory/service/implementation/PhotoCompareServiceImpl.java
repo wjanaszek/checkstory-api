@@ -17,7 +17,7 @@ public class PhotoCompareServiceImpl implements PhotoCompareService {
 
     private final String IMAGES_COMPARE_SERVICE_URL = "http://localhost:8000";
 
-    public PhotoWithContent compare(Long firstId, Long secondId, Integer sensitivity) throws NoResourceFoundException {
+    public PhotoWithContent compare(Long firstId, Long secondId, Integer sensitivity, Integer size) throws NoResourceFoundException {
         PhotoWithContent photoWithContent = new PhotoWithContent();
         Photo first = photoService.findOne(firstId);
         Photo second = photoService.findOne(secondId);
@@ -43,7 +43,7 @@ public class PhotoCompareServiceImpl implements PhotoCompareService {
         }
 
         photoWithContent.setImageType("jpg");
-        photoWithContent.setContent(photoService.generateBase64Thumbnail(resultContent));
+        photoWithContent.setContent(photoService.generateBase64Thumbnail(resultContent, size));
         return photoWithContent;
     }
 

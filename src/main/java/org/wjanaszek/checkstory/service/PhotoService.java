@@ -15,7 +15,7 @@ public interface PhotoService {
 
     String generateBase64Thumbnail(File file);
 
-    String generateBase64Thumbnail(String base64String);
+    String generateBase64Thumbnail(String base64String, Integer targetSize);
 
     List<PhotoWithContent> getPhotosWithContentByStoryId(Long id);
 

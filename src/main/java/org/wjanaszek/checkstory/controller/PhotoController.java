@@ -19,9 +19,16 @@ public class PhotoController {
     public ResponseEntity<?> comparePhotos(
             @PathVariable Long firstId,
             @PathVariable Long secondId,
-            @RequestParam Integer sensitivity
+            @RequestParam(required = false) Integer sensitivity,
+            @RequestParam(required = false) Integer size
     ) throws NoResourceFoundException {
-        return ResponseEntity.ok(photoCompareService.compare(firstId, secondId, sensitivity));
+        if (sensitivity == null) {
+            sensitivity = 250;
+        }
+        if (size == null) {
+            size = 720;
+        }
+        return ResponseEntity.ok(photoCompareService.compare(firstId, secondId, sensitivity, size));
     }
 
 }

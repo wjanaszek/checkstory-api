@@ -5,6 +5,6 @@ import org.wjanaszek.checkstory.exception.NoResourceFoundException;
 
 public interface PhotoCompareService {
 
-    PhotoWithContent compare(Long firstId, Long secondId, Integer sensitivity) throws NoResourceFoundException;
+    PhotoWithContent compare(Long firstId, Long secondId, Integer sensitivity, Integer size) throws NoResourceFoundException;
 
 }
