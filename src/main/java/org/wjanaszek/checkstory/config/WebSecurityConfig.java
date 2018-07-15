@@ -96,6 +96,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 "/**/*.js"
         );
 
+        // for Angular web-app
+        web.ignoring().antMatchers(HttpMethod.OPTIONS, "/**");
     }
 
 }
